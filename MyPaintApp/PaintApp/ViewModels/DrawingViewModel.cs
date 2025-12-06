@@ -103,7 +103,6 @@ namespace PaintApp.ViewModels
             await LoadTemplates();
         }
 
-        [RelayCommand]
         public async Task SaveDrawing(string name, object collection)
         {
             var shapes = collection as Microsoft.UI.Xaml.Controls.UIElementCollection;
