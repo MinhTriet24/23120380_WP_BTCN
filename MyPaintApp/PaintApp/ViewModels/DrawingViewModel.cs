@@ -9,6 +9,7 @@ using PaintApp.Core.Helpers;
 using PaintApp.Services;
 using PaintApp_Data.Entities;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Windows.UI;
@@ -43,6 +44,10 @@ namespace PaintApp.ViewModels
         [ObservableProperty] private SolidColorBrush _canvasBackground = new SolidColorBrush(Colors.White);
 
         public ObservableCollection<ShapeTemplate> Templates { get; } = new();
+
+        public ObservableCollection<DrawingCanvas> SavedCanvases { get; } = new();
+
+        public event Action<List<Shape>, string> OnCanvasLoaded;
 
         public DrawingViewModel(CanvasService canvasService)
         {
@@ -126,6 +131,29 @@ namespace PaintApp.ViewModels
         {
             await _canvasService.DeleteTemplateAsync(id);
             await LoadTemplates();
+        }
+
+        [RelayCommand]
+        public async Task LoadSavedCanvases()
+        {
+            var list = await _canvasService.GetAllCanvasesAsync();
+            SavedCanvases.Clear();
+            foreach (var item in list) SavedCanvases.Add(item);
+        }
+
+        [RelayCommand]
+        public async Task OpenCanvas(int id)
+        {
+            var canvasData = await _canvasService.GetCanvasByIdAsync(id);
+            if (canvasData != null && !string.IsNullOrEmpty(canvasData.DataJson))
+            {
+                var shapes = ShapeSerializer.Deserialize(canvasData.DataJson);
+
+                OnCanvasLoaded?.Invoke(shapes, canvasData.BackgroundColor);
+
+                CanvasWidth = canvasData.Width;
+                CanvasHeight = canvasData.Height;
+            }
         }
     }
 }

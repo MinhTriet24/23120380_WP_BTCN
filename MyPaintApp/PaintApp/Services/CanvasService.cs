@@ -2,6 +2,7 @@
 using PaintApp_Data.Context;
 using PaintApp_Data.Entities;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace PaintApp.Services
@@ -54,6 +55,19 @@ namespace PaintApp.Services
                 _context.ShapeTemplates.Remove(item);
                 await _context.SaveChangesAsync();
             }
+        }
+
+        public async Task<List<DrawingCanvas>> GetAllCanvasesAsync()
+        {
+            return await _context.DrawingCanvases
+                .Select(c => new DrawingCanvas { Id = c.Id, Name = c.Name, CreatedAt = c.CreatedAt })
+                .OrderByDescending(c => c.CreatedAt)
+                .ToListAsync();
+        }
+
+        public async Task<DrawingCanvas> GetCanvasByIdAsync(int id)
+        {
+            return await _context.DrawingCanvases.FindAsync(id);
         }
     }
 }
