@@ -712,7 +712,7 @@ namespace PaintApp.Views.Pages
 
         private void OnPageKeyDown(object sender, KeyRoutedEventArgs e)
         {
-            if (e.Key == VirtualKey.Delete || e.Key == VirtualKey.Back)
+            if (e.Key == VirtualKey.Delete)
             {
                 if (_selectedShape != null)
                 {
