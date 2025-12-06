@@ -238,6 +238,26 @@ namespace PaintApp.Views.Pages
             shape.PointerPressed += Shape_PointerPressed;
             shape.PointerMoved += Shape_PointerMoved;
             shape.PointerReleased += Shape_PointerReleased;
+
+            var menu = new MenuFlyout();
+
+            // Tạo các mục menu
+            var itemRect = CreateMenuItem("Convert to Rectangle", ToolType.Rectangle);
+            var itemOval = CreateMenuItem("Convert to Oval", ToolType.Oval);
+            var itemTri = CreateMenuItem("Convert to Triangle", ToolType.Triangle);
+            var itemPoly = CreateMenuItem("Convert to Polygon", ToolType.Polygon);
+            var itemCircle = CreateMenuItem("Convert to Circle", ToolType.Circle);
+            var itemLine = CreateMenuItem("Convert to Line", ToolType.Line);
+
+            menu.Items.Add(itemRect);
+            menu.Items.Add(itemOval);
+            menu.Items.Add(itemTri);
+            menu.Items.Add(itemPoly);
+            menu.Items.Add(itemCircle);
+            menu.Items.Add(itemLine);
+
+            // Gán menu vào hình
+            shape.ContextFlyout = menu;
         }
 
         private void Shape_PointerPressed(object sender, PointerRoutedEventArgs e)
@@ -287,6 +307,111 @@ namespace PaintApp.Views.Pages
                 var shape = sender as Shape;
                 shape?.ReleasePointerCapture(e.Pointer);
                 e.Handled = true;
+            }
+        }
+
+        private void RecalculatePolygonPoints(Polygon polygon, double width, double height, ToolType type)
+        {
+            polygon.Points.Clear();
+
+            if (type == ToolType.Triangle)
+            {
+                polygon.Points.Add(new Point(width / 2, 0));     
+                polygon.Points.Add(new Point(0, height));       
+                polygon.Points.Add(new Point(width, height));   
+            }
+            else if (type == ToolType.Polygon) // Lục giác
+            {
+                polygon.Points.Add(new Point(width/2, 0));
+                polygon.Points.Add(new Point(0, height*0.25));
+                polygon.Points.Add(new Point(0, height*0.75));
+                polygon.Points.Add(new Point(width/2, height));
+                polygon.Points.Add(new Point(width, height*0.75));
+                polygon.Points.Add(new Point(width, height*0.25));
+            }
+
+            polygon.Stretch = Stretch.Fill;
+        }
+
+        private void ConvertSelectedShape(ToolType targetType)
+        {
+            if (_selectedShape == null) return;
+
+            double left = Canvas.GetLeft(_selectedShape);
+            double top = Canvas.GetTop(_selectedShape);
+
+            double width = _selectedShape.Width;
+            double height = _selectedShape.Height;
+
+            var stroke = _selectedShape.Stroke;
+            var fill = _selectedShape.Fill;
+            var thickness = _selectedShape.StrokeThickness;
+            var dashArray = _selectedShape.StrokeDashArray;
+
+            Shape newShape = CreateShape(targetType);
+            if (newShape == null) return;
+
+            if (targetType == ToolType.Circle)
+            {
+                double size = Math.Max(width, height);
+                newShape.Width = size;
+                newShape.Height = size;
+            }
+            else if (newShape is Line line)
+            {
+                line.X1 = 0;
+                line.Y1 = 0;
+                line.X2 = width;
+                line.Y2 = height;
+
+                line.Width = width;
+                line.Height = height;
+            }
+            else
+            {
+                newShape.Width = width;
+                newShape.Height = height;
+            }
+
+            newShape.Stroke = _originalStroke;
+            newShape.Fill = fill;
+            newShape.StrokeThickness = thickness;
+
+            if (dashArray != null)
+            {
+                var newDash = new DoubleCollection();
+                foreach (var d in dashArray) newDash.Add(d);
+                newShape.StrokeDashArray = newDash;
+            }
+
+            Canvas.SetLeft(newShape, left);
+            Canvas.SetTop(newShape, top);
+
+            if (newShape is Polygon poly)
+            {
+                RecalculatePolygonPoints(poly, width, height, targetType);
+            }
+
+            int index = DrawingCanvas.Children.IndexOf(_selectedShape);
+            DrawingCanvas.Children.RemoveAt(index);
+            DrawingCanvas.Children.Insert(index, newShape);
+
+            AttachEventsToShape(newShape);
+            SelectShape(newShape);
+        }
+
+        private MenuFlyoutItem CreateMenuItem(string text, ToolType type)
+        {
+            var item = new MenuFlyoutItem { Text = text, Tag = type };
+            item.Click += OnConvertShapeClicked;
+            return item;
+        }
+
+        private void OnConvertShapeClicked(object sender, RoutedEventArgs e)
+        {
+            if (sender is MenuFlyoutItem item && item.Tag is ToolType targetType)
+            {
+                ConvertSelectedShape(targetType);
             }
         }
 
