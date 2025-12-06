@@ -47,6 +47,7 @@
                                 <ColorPicker 
                                 Color="{x:Bind ViewModel.StrokeColor, Mode=TwoWay}" 
                                 IsColorSpectrumVisible="False"
+                                ColorChanged="OnStrokeColorChanged"
                                 IsColorChannelTextInputVisible="True"/>
                             </Flyout>
                         </Button.Flyout>
@@ -59,7 +60,7 @@
                     <Button Content="Màu nền">
                         <Button.Flyout>
                             <Flyout>
-                                <ColorPicker Color="{x:Bind ViewModel.StrokeColor, Mode=TwoWay}" 
+                                <ColorPicker Color="{x:Bind ViewModel.FillColor, Mode=TwoWay}" 
                                              ColorChanged="OnFillColorChanged"
                                              IsColorSpectrumVisible="False"
                                              IsColorChannelTextInputVisible="True"/>     

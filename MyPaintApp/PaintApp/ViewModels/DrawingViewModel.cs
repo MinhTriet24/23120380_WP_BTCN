@@ -21,11 +21,11 @@ namespace PaintApp.ViewModels
         public SolidColorBrush StrokeBrush => new SolidColorBrush(StrokeColor);
 
         [ObservableProperty]
-        private DoubleCollection strokeDashArray; //null - nét liền, value - nét đứt
+        private DoubleCollection strokeDashArray;
 
 
         [ObservableProperty]
-        private Color _fillColor = Colors.Transparent;
+        private Color _fillColor = Colors.White;
 
         public void SetStrokeStyle(string style)
         {

@@ -668,12 +668,11 @@ namespace PaintApp.Views.Pages
             {
                 var newColor = args.NewColor;
 
-                if (newColor.A == 0)
-                {
-                    newColor.A = 255;
-                }
+                newColor.A = 255;
 
                 _selectedShape.Fill = new SolidColorBrush(newColor);
+
+                ViewModel.FillColor = newColor;
             }
         }
 
@@ -681,13 +680,15 @@ namespace PaintApp.Views.Pages
         {
             if (_selectedShape != null)
             {
-                var newColor = args.NewColor;
+                var newColor = args.NewColor; 
 
-                if (newColor.A == 0) newColor.A = 255;
+                newColor.A = 255;
 
                 _originalStroke = new SolidColorBrush(newColor);
 
                 _selectedShape.Stroke = new SolidColorBrush(newColor);
+
+                ViewModel.StrokeColor = newColor;
             }
         }
 
