@@ -23,6 +23,47 @@
         </Grid.RowDefinitions>
 
         <CommandBar Grid.Row="0" DefaultLabelPosition="Right">
+            <AppBarButton Icon="Save" Label="Lưu" 
+                  Command="{x:Bind ViewModel.SaveDrawingCommand}"
+                  CommandParameter="{x:Bind DrawingCanvas.Children}"/>
+
+            <AppBarButton Icon="Copy" Label="Templates">
+                <AppBarButton.Flyout>
+                    <Flyout>
+                        <StackPanel Width="250" Spacing="10">
+                            <TextBlock Text="Mẫu có sẵn" FontWeight="Bold"/>
+
+                            <ListView ItemsSource="{x:Bind ViewModel.Templates}"
+                              SelectionChanged="OnTemplateClicked"
+                              Height="300">
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <StackPanel Orientation="Horizontal" Spacing="10">
+                                                <SymbolIcon Symbol="OutlineStar"/>
+                                                <TextBlock Text="{Binding Name}" VerticalAlignment="Center"/>
+                                            </StackPanel>
+
+                                            <Button Grid.Column="1" Content="X" 
+                                            Click="OnDeleteTemplateClick" 
+                                            Tag="{Binding Id}"
+                                            Background="Transparent" BorderThickness="0"/>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+                        </StackPanel>
+                    </Flyout>
+                </AppBarButton.Flyout>
+            </AppBarButton>
+
+            <AppBarSeparator/>
+
             <AppBarButton Icon="TouchPointer" Label="Cursor" Click="OnToolClicked" Tag="Cursor"/>
             <AppBarSeparator/>
             <AppBarButton Icon="Delete" Label="Delete" Click="OnDeleteButtonClicked"/>
