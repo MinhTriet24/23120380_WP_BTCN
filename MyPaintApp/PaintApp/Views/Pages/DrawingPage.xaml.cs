@@ -841,5 +841,8 @@ namespace PaintApp.Views.Pages
             }
         }
 
+        private async void OnDeleteCanvasClicked(object sender, RoutedEventArgs e)
+        { }
+
     }
 }

@@ -44,7 +44,10 @@
                                                 <TextBlock Text="{x:Bind Name}" FontWeight="SemiBold"/>
                                                 <TextBlock Text="{x:Bind CreatedAt}" FontSize="10" Foreground="Gray"/>
                                             </StackPanel>
-                                            <Button Grid.Column="1" Content="X" FontSize="10" Background="Transparent"/>
+                                            <Button Grid.Column="1" Content="&#xE74D;" FontFamily="Segoe MDL2 Assets"
+                                                    Background="Transparent" BorderThickness="0"
+                                                    Tag="{x:Bind Id}"
+                                                    Click="OnDeleteCanvasClicked"/>
                                         </Grid>
                                     </DataTemplate>
                                 </ListView.ItemTemplate>
