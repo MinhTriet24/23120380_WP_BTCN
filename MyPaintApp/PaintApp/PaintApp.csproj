@@ -12,6 +12,11 @@
     <EnableMsixTooling>true</EnableMsixTooling>
     <Nullable>enable</Nullable>
   </PropertyGroup>
+  <ItemGroup>
+    <None Remove="Views\Pages\DashboardPage.xaml" />
+    <None Remove="Views\Pages\DrawingPage.xaml" />
+    <None Remove="Views\Pages\HomePage.xaml" />
+  </ItemGroup>
 
   <ItemGroup>
     <Content Include="Assets\SplashScreen.scale-200.png" />
@@ -52,6 +57,27 @@
     <Content Update="Assets\DefaultAvatar.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Core\Constants\" />
+    <Folder Include="Core\Helpers\" />
+    <Folder Include="ViewModels\" />
+    <Folder Include="Views\Controls\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\Pages\DashboardPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\Pages\DrawingPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\Pages\HomePage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
 
   <!--
