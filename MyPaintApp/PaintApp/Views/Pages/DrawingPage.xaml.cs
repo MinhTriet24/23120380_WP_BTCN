@@ -8,6 +8,7 @@ using Windows.Foundation; // Chứa struct Point
 using PaintApp.ViewModels;
 using PaintApp.Core.Enums;
 using Microsoft.UI.Xaml.Media;
+using System.Net.WebSockets;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -102,7 +103,9 @@ namespace PaintApp.Views.Pages
             {
                 case ToolType.Line: return new Line();
                 case ToolType.Rectangle: return new Rectangle();
-                case ToolType.Oval: return new Ellipse();
+                case ToolType.Circle:
+                case ToolType.Oval: 
+                    return new Ellipse();
                 default: return null;
             }
         }
@@ -127,8 +130,18 @@ namespace PaintApp.Views.Pages
             Canvas.SetLeft(shape, left);
             Canvas.SetTop(shape, top);
 
-            shape.Width = width;
-            shape.Height = height;
+            //Circle
+            if(ViewModel.CurrentTool == ToolType.Circle)
+            {
+                var size = Math.Max(width, height);
+                shape.Width = size;
+                shape.Height = size;
+            }
+            else //Rectangle, Oval 
+            {
+                shape.Width = width;
+                shape.Height = height;
+            }
         }
 
     }
