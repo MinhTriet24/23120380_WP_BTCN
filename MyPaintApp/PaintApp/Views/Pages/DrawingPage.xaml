@@ -76,6 +76,20 @@
                     PointerPressed="OnCanvasPointerPressed"
                     PointerMoved="OnCanvasPointerMoved"
                     PointerReleased="OnCanvasPointerReleased">
+
+                <Canvas x:Name="ResizeAdorner" Visibility="Collapsed" Canvas.ZIndex="99">
+
+                    <Rectangle x:Name="HandleTopLeft" Width="10" Height="10" Fill="White" Stroke="Blue" Tag="TopLeft" PointerPressed="OnResizeHandlePressed" PointerEntered="OnResizeHandleHover" PointerExited="OnResizeHandleExit"/>
+                    <Rectangle x:Name="HandleTopRight" Width="10" Height="10" Fill="White" Stroke="Blue" Tag="TopRight" PointerPressed="OnResizeHandlePressed" PointerEntered="OnResizeHandleHover" PointerExited="OnResizeHandleExit"/>
+                    <Rectangle x:Name="HandleBottomLeft" Width="10" Height="10" Fill="White" Stroke="Blue" Tag="BottomLeft" PointerPressed="OnResizeHandlePressed" PointerEntered="OnResizeHandleHover" PointerExited="OnResizeHandleExit"/>
+                    <Rectangle x:Name="HandleBottomRight" Width="10" Height="10" Fill="White" Stroke="Blue" Tag="BottomRight" PointerPressed="OnResizeHandlePressed" PointerEntered="OnResizeHandleHover" PointerExited="OnResizeHandleExit"/>
+
+                    <Rectangle x:Name="HandleTop" Width="10" Height="10" Fill="White" Stroke="Blue" Tag="Top" PointerPressed="OnResizeHandlePressed" PointerEntered="OnResizeHandleHover" PointerExited="OnResizeHandleExit"/>
+                    <Rectangle x:Name="HandleBottom" Width="10" Height="10" Fill="White" Stroke="Blue" Tag="Bottom" PointerPressed="OnResizeHandlePressed" PointerEntered="OnResizeHandleHover" PointerExited="OnResizeHandleExit"/>
+                    <Rectangle x:Name="HandleLeft" Width="10" Height="10" Fill="White" Stroke="Blue" Tag="Left" PointerPressed="OnResizeHandlePressed" PointerEntered="OnResizeHandleHover" PointerExited="OnResizeHandleExit"/>
+                    <Rectangle x:Name="HandleRight" Width="10" Height="10" Fill="White" Stroke="Blue" Tag="Right" PointerPressed="OnResizeHandlePressed" PointerEntered="OnResizeHandleHover" PointerExited="OnResizeHandleExit"/>
+
+                </Canvas>
             </Canvas>
         </ScrollViewer>
     </Grid>

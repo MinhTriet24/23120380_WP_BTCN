@@ -10,6 +10,7 @@ using PaintApp.ViewModels;
 using System;
 using System.Net.WebSockets;
 using Windows.Foundation;
+using Microsoft.UI.Input;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -31,6 +32,9 @@ namespace PaintApp.Views.Pages
         private Point _lastMovePoint;
         private Brush _originalStroke;
         private bool _isDraggingShape = false;
+        private bool _isResizing = false;
+        private string _currentResizeHandleTag = "";
+
         public DrawingPage()
         {
             ViewModel = App.Current.Services.GetService<DrawingViewModel>();
@@ -39,6 +43,8 @@ namespace PaintApp.Views.Pages
 
         private void OnToolClicked(object sender, RoutedEventArgs e)
         {
+            DeselectCurrentShape();
+
             if (sender is AppBarButton btn && btn.Tag is string toolName)
             {
                 if (Enum.TryParse<ToolType>(toolName, out var tool))
@@ -88,35 +94,179 @@ namespace PaintApp.Views.Pages
 
         private void OnCanvasPointerMoved(object sender, PointerRoutedEventArgs e)
         {
-            if (!_isDrawing || _currentShape == null) return;
-
             var pt = e.GetCurrentPoint(DrawingCanvas);
-            var currentPoint = pt.Position;
+            var currentX = pt.Position.X;
+            var currentY = pt.Position.Y;
 
-            UpdateShape(_currentShape, currentPoint);
+            // 1. TRƯỜNG HỢP: ĐANG VẼ HÌNH MỚI
+            if (_isDrawing && _currentShape != null)
+            {
+                UpdateShape(_currentShape, pt.Position);
+                return;
+            }
+
+            // 2. TRƯỜNG HỢP: ĐANG RESIZE (Kéo 8 điểm neo)
+            if (_isResizing && _selectedShape != null)
+            {
+                double l = Canvas.GetLeft(_selectedShape);
+                double t = Canvas.GetTop(_selectedShape);
+                double w = _selectedShape.Width;
+                double h = _selectedShape.Height;
+
+                if (double.IsNaN(w)) w = 0;
+                if (double.IsNaN(h)) h = 0;
+
+                switch (_currentResizeHandleTag)
+                {
+                    case "Right":
+                        double newW_R = currentX - l;
+                        if (newW_R > 10) _selectedShape.Width = newW_R;
+                        break;
+
+                    case "Bottom":
+                        double newH_B = currentY - t;
+                        if (newH_B > 10) _selectedShape.Height = newH_B;
+                        break;
+
+                    case "Left":
+                        double newL = currentX;
+                        double newW_L = (l + w) - currentX;
+                        if (newW_L > 10)
+                        {
+                            Canvas.SetLeft(_selectedShape, newL);
+                            _selectedShape.Width = newW_L;
+                        }
+                        break;
+
+                    case "Top":
+                        double newT = currentY;
+                        double newH_T = (t + h) - currentY;
+                        if (newH_T > 10)
+                        {
+                            Canvas.SetTop(_selectedShape, newT);
+                            _selectedShape.Height = newH_T;
+                        }
+                        break;
+
+                    case "BottomRight":
+                        double newW_BR = currentX - l;
+                        double newH_BR = currentY - t;
+                        if (newW_BR > 10) _selectedShape.Width = newW_BR;
+                        if (newH_BR > 10) _selectedShape.Height = newH_BR;
+                        break;
+
+                    case "TopLeft":
+                        double newL_TL = currentX;
+                        double newT_TL = currentY;
+                        double newW_TL = (l + w) - currentX;
+                        double newH_TL = (t + h) - currentY;
+                        if (newW_TL > 10 && newH_TL > 10)
+                        {
+                            Canvas.SetLeft(_selectedShape, newL_TL);
+                            Canvas.SetTop(_selectedShape, newT_TL);
+                            _selectedShape.Width = newW_TL;
+                            _selectedShape.Height = newH_TL;
+                        }
+                        break;
+
+                    case "TopRight":
+                        double newT_TR = currentY;
+                        double newW_TR = currentX - l;
+                        double newH_TR = (t + h) - currentY;
+                        if (newW_TR > 10 && newH_TR > 10)
+                        {
+                            Canvas.SetTop(_selectedShape, newT_TR);
+                            _selectedShape.Width = newW_TR;
+                            _selectedShape.Height = newH_TR;
+                        }
+                        break;
+
+                    case "BottomLeft":
+                        double newL_BL = currentX;
+                        double newW_BL = (l + w) - currentX;
+                        double newH_BL = currentY - t;
+                        if (newW_BL > 10 && newH_BL > 10)
+                        {
+                            Canvas.SetLeft(_selectedShape, newL_BL);
+                            _selectedShape.Width = newW_BL;
+                            _selectedShape.Height = newH_BL;
+                        }
+                        break;
+                }
+
+                if (_selectedShape is Line line)
+                {
+                    line.X2 = _selectedShape.Width;
+                    line.Y2 = _selectedShape.Height;
+                }
+                else if (_selectedShape is Polygon poly)
+                {
+                    ToolType type = poly.Points.Count == 3 ? ToolType.Triangle : ToolType.Polygon;
+                    RecalculatePolygonPoints(poly, _selectedShape.Width, _selectedShape.Height, type);
+                }
+
+                UpdateAdornerPosition();
+                return;
+            }
+
+            // 3. TRƯỜNG HỢP: ĐANG DI CHUYỂN HÌNH (Dragging)
+            if (_isDraggingShape && _selectedShape != null && ViewModel.CurrentTool == ToolType.Cursor)
+            {
+                double offsetX = currentX - _lastMovePoint.X;
+                double offsetY = currentY - _lastMovePoint.Y;
+
+                double oldLeft = Canvas.GetLeft(_selectedShape);
+                double oldTop = Canvas.GetTop(_selectedShape);
+
+                Canvas.SetLeft(_selectedShape, oldLeft + offsetX);
+                Canvas.SetTop(_selectedShape, oldTop + offsetY);
+
+                _lastMovePoint = pt.Position;
+
+                UpdateAdornerPosition();
+            }
         }
 
         private void OnCanvasPointerReleased(object sender, PointerRoutedEventArgs e)
         {
             if (_isDrawing)
             {
-                if (_isDrawing)
+                _isDrawing = false;
+
+                if (_currentShape != null)
                 {
-                    _isDrawing = false;
+                    AttachEventsToShape(_currentShape);
 
-                    if (_currentShape != null)
+                    if (_currentShape.Fill == null)
                     {
-                        AttachEventsToShape(_currentShape);
-
-                        if (_currentShape.Fill == null)
-                        {
-                            _currentShape.Fill = new SolidColorBrush(Microsoft.UI.Colors.Transparent);
-                        }
+                        _currentShape.Fill = new SolidColorBrush(Microsoft.UI.Colors.Transparent);
                     }
-
-                    _currentShape = null;
-                    DrawingCanvas.ReleasePointerCapture(e.Pointer);
                 }
+
+                _currentShape = null;
+                DrawingCanvas.ReleasePointerCapture(e.Pointer);
+            }
+
+            if (_isResizing)
+            {
+                _isResizing = false;
+                _currentResizeHandleTag = "";
+
+                HandleTopLeft.ReleasePointerCapture(e.Pointer);
+                HandleTopRight.ReleasePointerCapture(e.Pointer);
+                HandleBottomLeft.ReleasePointerCapture(e.Pointer);
+                HandleBottomRight.ReleasePointerCapture(e.Pointer);
+
+                HandleTop.ReleasePointerCapture(e.Pointer);
+                HandleBottom.ReleasePointerCapture(e.Pointer);
+                HandleLeft.ReleasePointerCapture(e.Pointer);
+                HandleRight.ReleasePointerCapture(e.Pointer);
+            }
+
+            if (_isDraggingShape)
+            {
+                _isDraggingShape = false;
+                var shape = sender as Shape;
             }
         }
 
@@ -220,6 +370,8 @@ namespace PaintApp.Views.Pages
             _originalStroke = _selectedShape.Stroke;
 
             _selectedShape.Stroke = new SolidColorBrush(Microsoft.UI.Colors.DodgerBlue);
+
+            UpdateAdornerPosition();
         }
 
         private void DeselectCurrentShape()
@@ -230,6 +382,7 @@ namespace PaintApp.Views.Pages
 
                 _selectedShape = null;
                 _originalStroke = null;
+                ResizeAdorner.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -296,6 +449,8 @@ namespace PaintApp.Views.Pages
                 Canvas.SetTop(_selectedShape, oldTop + offsetY);
 
                 _lastMovePoint = currentPoint;
+
+                UpdateAdornerPosition();
             }
         }
 
@@ -322,6 +477,7 @@ namespace PaintApp.Views.Pages
             }
             else if (type == ToolType.Polygon) // Lục giác
             {
+
                 polygon.Points.Add(new Point(width/2, 0));
                 polygon.Points.Add(new Point(0, height*0.25));
                 polygon.Points.Add(new Point(0, height*0.75));
@@ -389,7 +545,7 @@ namespace PaintApp.Views.Pages
 
             if (newShape is Polygon poly)
             {
-                RecalculatePolygonPoints(poly, width, height, targetType);
+                RecalculatePolygonPoints(poly, newShape.Width, newShape.Height, targetType);
             }
 
             int index = DrawingCanvas.Children.IndexOf(_selectedShape);
@@ -413,6 +569,88 @@ namespace PaintApp.Views.Pages
             {
                 ConvertSelectedShape(targetType);
             }
+        }
+
+        private void OnResizeHandleHover(object sender, PointerRoutedEventArgs e)
+        {
+            var rect = sender as Rectangle;
+            if (rect == null) return;
+
+            InputSystemCursorShape cursorShape = InputSystemCursorShape.Arrow;
+            string tag = rect.Tag.ToString();
+
+            // Góc chéo
+            if (tag == "TopLeft" || tag == "BottomRight") cursorShape = InputSystemCursorShape.SizeNorthwestSoutheast;
+            else if (tag == "TopRight" || tag == "BottomLeft") cursorShape = InputSystemCursorShape.SizeNortheastSouthwest;
+
+            // Cạnh thẳng (Mới)
+            else if (tag == "Top" || tag == "Bottom") cursorShape = InputSystemCursorShape.SizeNorthSouth; // Mũi tên dọc
+            else if (tag == "Left" || tag == "Right") cursorShape = InputSystemCursorShape.SizeWestEast;   // Mũi tên ngang
+
+            this.ProtectedCursor = InputSystemCursor.Create(cursorShape);
+        }
+
+        private void OnResizeHandleExit(object sender, PointerRoutedEventArgs e)
+        {
+            this.ProtectedCursor = InputSystemCursor.Create(InputSystemCursorShape.Arrow);
+        }
+
+        private void OnResizeHandlePressed(object sender, PointerRoutedEventArgs e)
+        {
+            var rect = sender as Rectangle;
+            if (rect == null) return;
+
+            _isResizing = true;
+            _currentResizeHandleTag = rect.Tag.ToString();
+
+            // Quan trọng: Capture chuột vào ô vuông để khi kéo nhanh ra ngoài vẫn nhận sự kiện
+            rect.CapturePointer(e.Pointer);
+
+            // Ngăn sự kiện lan xuống Canvas (để không bị hiểu nhầm là click chọn hình khác)
+            e.Handled = true;
+        }
+
+        private void UpdateAdornerPosition()
+        {
+            if (_selectedShape == null)
+            {
+                ResizeAdorner.Visibility = Visibility.Collapsed;
+                return;
+            }
+
+            ResizeAdorner.Visibility = Visibility.Visible;
+
+            double left = Canvas.GetLeft(_selectedShape);
+            double top = Canvas.GetTop(_selectedShape);
+            double w = _selectedShape.Width;
+            double h = _selectedShape.Height;
+
+            if (double.IsNaN(w)) w = 0;
+            if (double.IsNaN(h)) h = 0;
+
+            Canvas.SetLeft(HandleTopLeft, left - 5); 
+            Canvas.SetTop(HandleTopLeft, top - 5);
+
+            Canvas.SetLeft(HandleTopRight, left + w - 5); 
+            Canvas.SetTop(HandleTopRight, top - 5);
+
+            Canvas.SetLeft(HandleBottomLeft, left - 5); 
+            Canvas.SetTop(HandleBottomLeft, top + h - 5);
+
+            Canvas.SetLeft(HandleBottomRight, left + w - 5); 
+            Canvas.SetTop(HandleBottomRight, top + h - 5);
+
+            Canvas.SetLeft(HandleTop, left + (w / 2) - 5);
+            Canvas.SetTop(HandleTop, top - 5);
+
+            Canvas.SetLeft(HandleBottom, left + (w / 2) - 5);
+            Canvas.SetTop(HandleBottom, top + h - 5);
+
+            Canvas.SetLeft(HandleLeft, left - 5);
+            Canvas.SetTop(HandleLeft, top + (h / 2) - 5);
+
+            Canvas.SetLeft(HandleRight, left + w - 5);
+            Canvas.SetTop(HandleRight, top + (h / 2) - 5);
         }
 
     }
