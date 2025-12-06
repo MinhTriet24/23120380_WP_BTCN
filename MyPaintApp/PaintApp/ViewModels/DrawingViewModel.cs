@@ -11,6 +11,7 @@ using PaintApp_Data.Entities;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 using Windows.UI;
 
@@ -48,6 +49,9 @@ namespace PaintApp.ViewModels
         public ObservableCollection<DrawingCanvas> SavedCanvases { get; } = new();
 
         public event Action<List<Shape>, string> OnCanvasLoaded;
+
+        [ObservableProperty]
+        private int _currentCanvasId = -1;
 
         public DrawingViewModel(CanvasService canvasService)
         {
@@ -148,12 +152,35 @@ namespace PaintApp.ViewModels
             if (canvasData != null && !string.IsNullOrEmpty(canvasData.DataJson))
             {
                 var shapes = ShapeSerializer.Deserialize(canvasData.DataJson);
+                CurrentCanvasId = canvasData.Id;
 
                 OnCanvasLoaded?.Invoke(shapes, canvasData.BackgroundColor);
 
                 CanvasWidth = canvasData.Width;
                 CanvasHeight = canvasData.Height;
             }
+        }
+
+        [RelayCommand]
+        public async Task DeleteCanvas(int id)
+        {
+            await _canvasService.DeleteCanvasAsync(id);
+
+            var itemToRemove = SavedCanvases.FirstOrDefault(c => c.Id == id);
+            if (itemToRemove != null)
+            {
+                SavedCanvases.Remove(itemToRemove);
+            }
+
+            if (id == CurrentCanvasId)
+            {
+                CurrentCanvasId = -1;
+            }
+        }
+
+        public void CreateNewCanvas()
+        {
+            CurrentCanvasId = -1;
         }
     }
 }
