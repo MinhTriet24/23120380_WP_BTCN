@@ -107,6 +107,7 @@ namespace PaintApp.Views.Pages
                 case ToolType.Oval: 
                     return new Ellipse();
                 case ToolType.Triangle:
+                case ToolType.Polygon:
                     return new Polygon();
                 default: return null;
             }
@@ -149,6 +150,19 @@ namespace PaintApp.Views.Pages
                     polygon.Points.Add(new Point(0, height));
                     polygon.Points.Add(new Point(width, height));
                 }
+                else if(ViewModel.CurrentTool == ToolType.Polygon)
+                {
+                    polygon.Points.Add(new Point(width/2, 0));     
+                    polygon.Points.Add(new Point(0, height*0.25));   
+                    polygon.Points.Add(new Point(0, height*0.75)); 
+                    polygon.Points.Add(new Point(width/2, height));
+                    polygon.Points.Add(new Point(width, height*0.75));
+                    polygon.Points.Add(new Point(width, height*0.25));
+                }
+
+                polygon.Stretch = Stretch.Fill;
+                polygon.Width = width;
+                polygon.Height = height;
             }
             else //Rectangle, Oval 
             {
