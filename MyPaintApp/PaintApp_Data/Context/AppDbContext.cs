@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Storage;
 
 namespace PaintApp_Data.Context
 {
@@ -17,11 +18,9 @@ namespace PaintApp_Data.Context
 
         public AppDbContext()
         {
-            //Get LocalAppData path
-            var folder = Environment.SpecialFolder.LocalApplicationData;
-            var path = Environment.GetFolderPath(folder);
-
-            DbPath = Path.Join(path, "paint_app.db");
+            var folder = ApplicationData.Current.LocalFolder.Path;
+            DbPath = Path.Combine(folder, "paint_app.db");
+            System.Diagnostics.Debug.WriteLine($"DB PATH: {DbPath}");
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

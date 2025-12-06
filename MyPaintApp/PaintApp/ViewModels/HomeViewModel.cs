@@ -23,7 +23,7 @@ namespace PaintApp.ViewModels
         {
             _profileService = profileService;
             Profiles = new ObservableCollection<UserProfile>();
-            //LoadProfilesCommand.Execute(null);
+            LoadProfilesCommand.Execute(null);
         }
 
         [RelayCommand]
