@@ -14,18 +14,27 @@ namespace PaintApp_Data.Context
     {
 
         public DbSet<Entities.UserProfile> UserProfiles { get; set; }
+        public DbSet<DrawingCanvas> DrawingCanvases { get; set; }
+        public DbSet<ShapeTemplate> ShapeTemplates { get; set; }
         public string DbPath { get; }
+
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
+        {
+        }
 
         public AppDbContext()
         {
-            var folder = ApplicationData.Current.LocalFolder.Path;
-            DbPath = Path.Combine(folder, "paint_app.db");
-            System.Diagnostics.Debug.WriteLine($"DB PATH: {DbPath}");
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlite($"Data Source={DbPath}");
+            if (!optionsBuilder.IsConfigured)
+            {
+                var folder = System.Environment.SpecialFolder.LocalApplicationData;
+                var path = System.Environment.GetFolderPath(folder);
+                var dbPath = System.IO.Path.Join(path, "paint_app.db");
+                optionsBuilder.UseSqlite($"Data Source={DbPath}");
+            }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

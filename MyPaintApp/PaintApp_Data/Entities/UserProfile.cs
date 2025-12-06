@@ -32,7 +32,6 @@ namespace PaintApp_Data.Entities
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime LastAccessed { get; set; } = DateTime.Now;
 
-        // --- Navigation Properties (Quan hệ với các bảng khác) ---
         // public virtual ICollection<DrawingCanvas> DrawingCanvases { get; set; }
 
     }
