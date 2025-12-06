@@ -9,7 +9,7 @@ using PaintApp.Core.Enums;
 using PaintApp.ViewModels;
 using System;
 using System.Net.WebSockets;
-using Windows.Foundation; // Chứa struct Point
+using Windows.Foundation;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -52,8 +52,6 @@ namespace PaintApp.Views.Pages
         {
             if (ViewModel.CurrentTool == ToolType.Cursor)
             {
-                // Logic select nằm ở sự kiện của Shape (xem bên dưới), 
-                // nhưng nếu click vào vùng trống của Canvas -> Bỏ chọn
                 DeselectCurrentShape();
                 return;
             }
@@ -112,8 +110,6 @@ namespace PaintApp.Views.Pages
 
                         if (_currentShape.Fill == null)
                         {
-                            // Fill Transparent giúp bắt được sự kiện click chuột
-                            // mà mắt thường vẫn nhìn xuyên qua được.
                             _currentShape.Fill = new SolidColorBrush(Microsoft.UI.Colors.Transparent);
                         }
                     }
@@ -215,30 +211,21 @@ namespace PaintApp.Views.Pages
 
         private void SelectShape(Shape shape)
         {
-            // Nếu click lại vào chính hình đang chọn thì thôi không làm gì
             if (_selectedShape == shape) return;
 
-            // 1. Bỏ chọn hình cũ trước
             DeselectCurrentShape();
 
-            // 2. Chọn hình mới
             _selectedShape = shape;
 
-            // Lưu lại màu gốc
             _originalStroke = _selectedShape.Stroke;
 
-            // Đổi màu để báo hiệu đang chọn (Màu Xanh Dương)
             _selectedShape.Stroke = new SolidColorBrush(Microsoft.UI.Colors.DodgerBlue);
-
-            // (Optional) Có thể tăng độ dày lên chút cho dễ nhìn
-            // _selectedShape.StrokeThickness += 1; 
         }
 
         private void DeselectCurrentShape()
         {
             if (_selectedShape != null)
             {
-                // Trả lại màu gốc
                 _selectedShape.Stroke = _originalStroke ?? new SolidColorBrush(Microsoft.UI.Colors.Black);
 
                 _selectedShape = null;
@@ -253,53 +240,38 @@ namespace PaintApp.Views.Pages
             shape.PointerReleased += Shape_PointerReleased;
         }
 
-        // 1. KHI CLICK VÀO HÌNH
         private void Shape_PointerPressed(object sender, PointerRoutedEventArgs e)
         {
-            // Chỉ cho phép chọn khi đang ở chế độ Cursor
             if (ViewModel.CurrentTool != ToolType.Cursor) return;
 
             var shape = sender as Shape;
             if (shape == null) return;
 
-            // A. Select hình
             SelectShape(shape);
 
-            // B. Chuẩn bị Move
             _isDraggingShape = true;
 
-            // Lấy vị trí chuột hiện tại
             var pt = e.GetCurrentPoint(DrawingCanvas);
             _lastMovePoint = pt.Position;
 
-            // Capture chuột để khi kéo nhanh ra ngoài hình vẫn nhận được sự kiện
             shape.CapturePointer(e.Pointer);
 
-            // CỰC KỲ QUAN TRỌNG: 
-            // Dòng này ngăn sự kiện lan xuống Canvas (để Canvas không tưởng là mình đang muốn vẽ hình mới)
             e.Handled = true;
         }
 
-        // 2. KHI KÉO HÌNH
         private void Shape_PointerMoved(object sender, PointerRoutedEventArgs e)
         {
-            // Phải thỏa mãn: Đang kéo + Có hình được chọn + Đang ở chế độ Cursor
             if (_isDraggingShape && _selectedShape != null && ViewModel.CurrentTool == ToolType.Cursor)
             {
                 var pt = e.GetCurrentPoint(DrawingCanvas);
                 var currentPoint = pt.Position;
 
-                // Tính toán khoảng cách di chuyển
                 double offsetX = currentPoint.X - _lastMovePoint.X;
                 double offsetY = currentPoint.Y - _lastMovePoint.Y;
 
-                // Lấy vị trí cũ
                 double oldLeft = Canvas.GetLeft(_selectedShape);
                 double oldTop = Canvas.GetTop(_selectedShape);
 
-                // Cập nhật vị trí mới
-                // Lưu ý: Line không dùng Canvas.Left/Top theo cách thông thường nếu em vẽ bằng X1, Y1
-                // Nhưng nếu em dùng logic Canvas.SetLeft lúc vẽ thì đoạn này OK.
                 Canvas.SetLeft(_selectedShape, oldLeft + offsetX);
                 Canvas.SetTop(_selectedShape, oldTop + offsetY);
 
@@ -307,7 +279,6 @@ namespace PaintApp.Views.Pages
             }
         }
 
-        // 3. KHI THẢ HÌNH RA
         private void Shape_PointerReleased(object sender, PointerRoutedEventArgs e)
         {
             if (_isDraggingShape)
