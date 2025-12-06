@@ -51,6 +51,7 @@ namespace PaintApp
 
             // C. Đăng ký Services (Logic nghiệp vụ)
             services.AddTransient<IUserProfileService, UserProfileService>();
+            services.AddTransient<CanvasService>();
 
             return services.BuildServiceProvider();
         }
