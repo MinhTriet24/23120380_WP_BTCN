@@ -16,7 +16,7 @@
         <helpers:ColorToBrushConverter x:Key="ColorToBrushConverter"/>
     </Page.Resources>
 
-    <Grid>
+    <Grid KeyDown="OnPageKeyDown">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
@@ -25,6 +25,7 @@
         <CommandBar Grid.Row="0" DefaultLabelPosition="Right">
             <AppBarButton Icon="TouchPointer" Label="Cursor" Click="OnToolClicked" Tag="Cursor"/>
             <AppBarSeparator/>
+            <AppBarButton Icon="Delete" Label="Delete" Click="OnDeleteButtonClicked"/>
             <AppBarButton Icon="Edit" Label="Line" Click="OnToolClicked" Tag="Line"
                           Background="{x:Bind ViewModel.CurrentTool, Mode=OneWay, Converter={StaticResource ToolHighlightConverter}, ConverterParameter='Line'}"/>
             <AppBarButton Icon="Accept" Label="Rectangle" Click="OnToolClicked" Tag="Rectangle"

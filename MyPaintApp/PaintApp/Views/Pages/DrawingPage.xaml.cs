@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI;
+using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
@@ -10,7 +11,7 @@ using PaintApp.ViewModels;
 using System;
 using System.Net.WebSockets;
 using Windows.Foundation;
-using Microsoft.UI.Input;
+using Windows.System;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -411,12 +412,19 @@ namespace PaintApp.Views.Pages
             var itemCircle = CreateMenuItem("Convert to Circle", ToolType.Circle);
             var itemLine = CreateMenuItem("Convert to Line", ToolType.Line);
 
+            var itemDelete = new MenuFlyoutItem { Text = "Delete", Icon = new SymbolIcon(Symbol.Delete) };
+            itemDelete.Click += (s, e) => DeleteSelectedShape();
+
             menu.Items.Add(itemRect);
             menu.Items.Add(itemOval);
             menu.Items.Add(itemTri);
             menu.Items.Add(itemPoly);
             menu.Items.Add(itemCircle);
             menu.Items.Add(itemLine);
+
+            menu.Items.Add(itemDelete);
+            menu.Items.Add(new MenuFlyoutSeparator());
+
 
             // Gán menu vào hình
             shape.ContextFlyout = menu;
@@ -690,6 +698,33 @@ namespace PaintApp.Views.Pages
 
                 ViewModel.StrokeColor = newColor;
             }
+        }
+
+        private void DeleteSelectedShape()
+        {
+           if (_selectedShape != null)
+            {
+                DrawingCanvas.Children.Remove(_selectedShape);
+
+                DeselectCurrentShape();
+            }
+        }
+
+        private void OnPageKeyDown(object sender, KeyRoutedEventArgs e)
+        {
+            if (e.Key == VirtualKey.Delete || e.Key == VirtualKey.Back)
+            {
+                if (_selectedShape != null)
+                {
+                    DeleteSelectedShape();
+                    e.Handled = true;
+                }
+            }
+        }
+
+        private void OnDeleteButtonClicked(object sender, RoutedEventArgs e)
+        {
+            DeleteSelectedShape();
         }
 
     }
