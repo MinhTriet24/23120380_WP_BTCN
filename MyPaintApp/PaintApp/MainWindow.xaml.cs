@@ -22,7 +22,6 @@ namespace PaintApp
             ExtendsContentIntoTitleBar = true;
             SetTitleBar(AppTitleBar);
 
-            TrySetSystemBackdrop();
 
             NavView.SelectedItem = NavView.MenuItems[0];
             ContentFrame.Navigate(typeof(HomePage));
@@ -51,14 +50,6 @@ namespace PaintApp
                         ContentFrame.Navigate(typeof(DashboardPage));
                         break;
                 }
-            }
-        }
-
-        private void TrySetSystemBackdrop()
-        {
-            if (Microsoft.UI.Composition.SystemBackdrops.MicaController.IsSupported())
-            {
-                this.SystemBackdrop = new MicaBackdrop();
             }
         }
 
