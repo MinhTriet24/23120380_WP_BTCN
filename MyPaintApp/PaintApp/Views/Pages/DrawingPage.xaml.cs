@@ -106,6 +106,8 @@ namespace PaintApp.Views.Pages
                 case ToolType.Circle:
                 case ToolType.Oval: 
                     return new Ellipse();
+                case ToolType.Triangle:
+                    return new Polygon();
                 default: return null;
             }
         }
@@ -136,6 +138,17 @@ namespace PaintApp.Views.Pages
                 var size = Math.Max(width, height);
                 shape.Width = size;
                 shape.Height = size;
+            }
+            else if(shape is Polygon polygon) //Triangle and Polygon
+            {
+                polygon.Points.Clear();
+
+                if(ViewModel.CurrentTool == ToolType.Triangle)
+                {
+                    polygon.Points.Add(new Point(width/2, 0));
+                    polygon.Points.Add(new Point(0, height));
+                    polygon.Points.Add(new Point(width, height));
+                }
             }
             else //Rectangle, Oval 
             {
