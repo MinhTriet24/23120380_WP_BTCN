@@ -59,11 +59,18 @@ namespace PaintApp.Views.Pages
                 _currentShape.StrokeThickness = ViewModel.StrokeThickness;
                 _currentShape.Fill = ViewModel.FillColor;
 
-                Canvas.SetLeft(_currentShape, _startPoint.X);
-                Canvas.SetTop(_currentShape, _startPoint.Y);
+                if (_currentShape is Line)
+                {
+                    Canvas.SetLeft(_currentShape, 0);
+                    Canvas.SetTop(_currentShape, 0);
+                }
+                else
+                {
+                    Canvas.SetLeft(_currentShape, _startPoint.X);
+                    Canvas.SetTop(_currentShape, _startPoint.Y);
+                }
 
                 DrawingCanvas.Children.Add(_currentShape);
-
                 DrawingCanvas.CapturePointer(e.Pointer);
             }
         }
