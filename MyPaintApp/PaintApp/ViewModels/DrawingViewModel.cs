@@ -10,7 +10,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Windows.UI;
-using WinUI_PaintApp.Core.Helpers; // Chứa struct Color
+using PaintApp.Core.Helpers;
 
 namespace PaintApp.ViewModels
 {
@@ -46,7 +46,7 @@ namespace PaintApp.ViewModels
         public DrawingViewModel(CanvasService canvasService)
         {
             _canvasService = canvasService;
-            //LoadTemplatesCommand.Execute(null);
+            LoadTemplatesCommand.Execute(null);
         }
 
         public void SetStrokeStyle(string style)
@@ -67,8 +67,10 @@ namespace PaintApp.ViewModels
         }
 
         [RelayCommand]
-        public async Task SaveDrawing(UIElementCollection shapes)
+        public async Task SaveDrawing(object collection) // Đổi UIElementCollection -> object
         {
+            var shapes = collection as UIElementCollection;
+
             if (shapes == null) return;
 
             string json = ShapeSerializer.Serialize(shapes);

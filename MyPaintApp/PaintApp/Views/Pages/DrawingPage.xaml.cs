@@ -727,5 +727,39 @@ namespace PaintApp.Views.Pages
             DeleteSelectedShape();
         }
 
+        private void OnTemplateClicked(object sender, SelectionChangedEventArgs e)
+        {
+            if (e.AddedItems.Count == 0) return;
+
+            var template = e.AddedItems[0] as PaintApp_Data.Entities.ShapeTemplate; // Nhớ using Entity
+            if (template == null) return;
+
+            var shapes = PaintApp.Core.Helpers.ShapeSerializer.Deserialize(template.ShapeJson);
+
+            if (shapes.Count > 0)
+            {
+                var newShape = shapes[0];
+
+                Canvas.SetLeft(newShape, 100);
+                Canvas.SetTop(newShape, 100);
+
+                AttachEventsToShape(newShape);
+
+                DrawingCanvas.Children.Add(newShape);
+
+                SelectShape(newShape);
+            }
+
+            (sender as ListView).SelectedIndex = -1;
+        }
+
+        private void OnDeleteTemplateClick(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button btn && btn.Tag is int id)
+            {
+                ViewModel.DeleteTemplateCommand.Execute(id);
+            }
+        }
+
     }
 }

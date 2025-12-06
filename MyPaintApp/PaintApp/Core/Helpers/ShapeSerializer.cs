@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text.Json;
 using Windows.UI;
 
-namespace WinUI_PaintApp.Core.Helpers
+namespace PaintApp.Core.Helpers
 {
     public static class ShapeSerializer
     {
