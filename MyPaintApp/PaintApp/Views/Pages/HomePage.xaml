@@ -7,7 +7,12 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:entities="using:PaintApp_Data.Entities"
+    xmlns:helpers="using:PaintApp.Core.Helpers"
     mc:Ignorable="d">
+
+    <Page.Resources>
+        <helpers:StringToImageSourceConverter x:Key="StringImgConverter"/>
+    </Page.Resources>
 
     <Grid Padding="48">
         <Grid.RowDefinitions>
@@ -29,7 +34,9 @@
                     <Grid Width="200" Height="220" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
                           CornerRadius="8" Padding="16">
                         <StackPanel VerticalAlignment="Center" Spacing="12">
-                            <PersonPicture DisplayName="{x:Bind UserName}" Height="80"/>
+                            <PersonPicture DisplayName="{x:Bind UserName}"
+                                           ProfilePicture="{x:Bind AvatarIcon, Converter={StaticResource StringImgConverter}}"
+                                           Height="80"/>
 
                             <TextBlock Text="{x:Bind UserName}" 
                                        Style="{StaticResource SubtitleTextBlockStyle}" 
