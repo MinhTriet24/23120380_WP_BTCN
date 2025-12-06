@@ -2,6 +2,7 @@
 using Microsoft.UI.Xaml;
 using PaintApp.Core.Interfaces;
 using PaintApp.Services;
+using PaintApp.ViewModels;
 using PaintApp_Data.Context;
 using System;
 using System.Collections.Generic;
@@ -45,7 +46,7 @@ namespace PaintApp
             services.AddDbContext<AppDbContext>();
 
             // B. Đăng ký ViewModels
-            // services.AddTransient<MainViewModel>(); 
+            services.AddTransient<HomeViewModel>();
 
             // C. Đăng ký Services (Logic nghiệp vụ)
             services.AddTransient<IUserProfileService, UserProfileService>();
