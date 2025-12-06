@@ -100,7 +100,7 @@
 
             <AppBarButton Icon="TouchPointer" Label="Cursor" Click="OnToolClicked" Tag="Cursor"/>
             <AppBarSeparator/>
-            <AppBarButton Icon="Delete" Label="Delete" Click="OnDeleteButtonClicked"/>
+            <AppBarButton Icon="Delete" Label="Xóa bảng vẽ" Click="OnDeleteCurrentBoardClicked"/>
             <AppBarButton Icon="Edit" Label="Line" Click="OnToolClicked" Tag="Line"
                           Background="{x:Bind ViewModel.CurrentTool, Mode=OneWay, Converter={StaticResource ToolHighlightConverter}, ConverterParameter='Line'}"/>
             <AppBarButton Icon="Accept" Label="Rectangle" Click="OnToolClicked" Tag="Rectangle"

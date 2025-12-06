@@ -847,38 +847,20 @@ namespace PaintApp.Views.Pages
 
             if (sender is Button btn && btn.Tag is int idToDelete)
             {
+                // Kiểm tra xem bài muốn xóa có phải là bài đang mở không
                 bool isDeletingCurrent = (idToDelete == ViewModel.CurrentCanvasId);
 
                 if (isDeletingCurrent)
                 {
-                    ContentDialog deleteDialog = new ContentDialog
-                    {
-                        XamlRoot = this.XamlRoot, 
-                        Title = "Xác nhận xóa",
-                        Content = "Bạn đang xóa bảng vẽ đang mở. Hành động này không thể hoàn tác. Bạn có chắc chắn không?",
-                        PrimaryButtonText = "Xóa ngay",
-                        CloseButtonText = "Hủy bỏ",
-                        DefaultButton = ContentDialogButton.Close
-                    };
-
-                    var result = await deleteDialog.ShowAsync();
-
-                    if (result != ContentDialogResult.Primary) return;
+                    // Nếu xóa bài đang mở -> Gọi hàm chung có xác nhận kỹ càng
+                    await DeleteCurrentCanvasWithConfirmation();
                 }
-
-                await ViewModel.DeleteCanvasCommand.ExecuteAsync(idToDelete);
-
-                if (isDeletingCurrent)
+                else
                 {
-                    DrawingCanvas.Children.Clear();
-                    DrawingCanvas.Children.Add(ResizeAdorner); // Giữ lại công cụ resize
-
-                    ViewModel.CreateNewCanvas();
-
-                    ShowNotification("Đã xóa bảng vẽ và tạo trang mới.");
+                    // Nếu xóa bài khác -> Xóa ngay (hoặc có thể hỏi xác nhận nhẹ nhàng nếu muốn)
+                    await ViewModel.DeleteCanvasCommand.ExecuteAsync(idToDelete);
                 }
             }
-
         }
 
         private async void ShowNotification(string message)
@@ -891,6 +873,64 @@ namespace PaintApp.Views.Pages
                 CloseButtonText = "Đóng"
             };
             await dialog.ShowAsync();
+        }
+
+        private async void OnDeleteCurrentBoardClicked(object sender, RoutedEventArgs e)
+        {
+            if (ViewModel.CurrentCanvasId == -1)
+            {
+                ContentDialog clearDialog = new ContentDialog
+                {
+                    XamlRoot = this.XamlRoot,
+                    Title = "Làm mới bảng vẽ",
+                    Content = "Bạn có muốn xóa toàn bộ hình trên màn hình để vẽ lại không?",
+                    PrimaryButtonText = "Làm mới",
+                    CloseButtonText = "Hủy",
+                    DefaultButton = ContentDialogButton.Primary
+                };
+
+                if (await clearDialog.ShowAsync() == ContentDialogResult.Primary)
+                {
+                    ResetCanvasUI();
+                }
+            }
+            else
+            {
+                await DeleteCurrentCanvasWithConfirmation();
+            }
+        }
+
+        private async System.Threading.Tasks.Task DeleteCurrentCanvasWithConfirmation()
+        {
+            ContentDialog deleteDialog = new ContentDialog
+            {
+                XamlRoot = this.XamlRoot,
+                Title = "Xóa bảng vẽ vĩnh viễn",
+                Content = "CẢNH BÁO: Bảng vẽ này đang được lưu trong cơ sở dữ liệu.\n\nHành động này sẽ xóa hoàn toàn bảng vẽ này khỏi hệ thống và không thể khôi phục.\nBạn có chắc chắn không?",
+                PrimaryButtonText = "Xóa ngay",
+                CloseButtonText = "Hủy bỏ",
+                DefaultButton = ContentDialogButton.Close
+            };
+
+            var result = await deleteDialog.ShowAsync();
+
+            if (result == ContentDialogResult.Primary)
+            {
+                await ViewModel.DeleteCanvasCommand.ExecuteAsync(ViewModel.CurrentCanvasId);
+
+                ResetCanvasUI();
+                ViewModel.CreateNewCanvas();
+
+                ShowNotification("Đã xóa bảng vẽ thành công.");
+            }
+        }
+
+        private void ResetCanvasUI()
+        {
+            DrawingCanvas.Children.Clear();
+            DrawingCanvas.Children.Add(ResizeAdorner);
+
+            DrawingCanvas.Background = new SolidColorBrush(Colors.White); 
         }
 
     }
