@@ -1,17 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
+﻿using Microsoft.UI.Composition.SystemBackdrops; // Cho Mica
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
+using PaintApp.Views.Pages;
+using System;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -26,6 +18,49 @@ namespace PaintApp
         public MainWindow()
         {
             InitializeComponent();
+
+            ExtendsContentIntoTitleBar = true;
+            SetTitleBar(AppTitleBar);
+
+            TrySetSystemBackdrop();
+
+            NavView.SelectedItem = NavView.MenuItems[0];
+            ContentFrame.Navigate(typeof(HomePage));
         }
+
+        private void NavView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
+        {
+            if (args.IsSettingsSelected)
+            {
+                // Xử lý khi chọn nút Settings (nếu cần)
+            }
+            else
+            {
+                var selectedItem = (NavigationViewItem)args.SelectedItem;
+                string pageTag = selectedItem.Tag.ToString();
+
+                switch (pageTag)
+                {
+                    case "Home":
+                        ContentFrame.Navigate(typeof(HomePage));
+                        break;
+                    case "Draw":
+                        ContentFrame.Navigate(typeof(DrawingPage));
+                        break;
+                    case "Dashboard":
+                        ContentFrame.Navigate(typeof(DashboardPage));
+                        break;
+                }
+            }
+        }
+
+        private void TrySetSystemBackdrop()
+        {
+            if (Microsoft.UI.Composition.SystemBackdrops.MicaController.IsSupported())
+            {
+                this.SystemBackdrop = new MicaBackdrop();
+            }
+        }
+
     }
 }
