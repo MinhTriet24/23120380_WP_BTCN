@@ -73,8 +73,8 @@ namespace PaintApp.Views.Pages
             {
                 _currentShape.Stroke = new SolidColorBrush(ViewModel.StrokeColor);
                 _currentShape.StrokeThickness = ViewModel.StrokeThickness;
-                _currentShape.Fill = ViewModel.FillColor;
                 _currentShape.StrokeDashArray = ViewModel.StrokeDashArray;
+                _currentShape.Fill = new SolidColorBrush(ViewModel.FillColor);
 
                 if (_currentShape is Line)
                 {
@@ -372,6 +372,15 @@ namespace PaintApp.Views.Pages
             _selectedShape.Stroke = new SolidColorBrush(Microsoft.UI.Colors.DodgerBlue);
 
             UpdateAdornerPosition();
+
+            if (_selectedShape.Fill is SolidColorBrush fillBrush)
+            {
+                ViewModel.FillColor = fillBrush.Color;
+            }
+            else
+            {
+                ViewModel.FillColor = Microsoft.UI.Colors.Transparent;
+            }
         }
 
         private void DeselectCurrentShape()
@@ -651,6 +660,35 @@ namespace PaintApp.Views.Pages
 
             Canvas.SetLeft(HandleRight, left + w - 5);
             Canvas.SetTop(HandleRight, top + (h / 2) - 5);
+        }
+
+        private void OnFillColorChanged(ColorPicker sender, ColorChangedEventArgs args)
+        {
+            if (_selectedShape != null)
+            {
+                var newColor = args.NewColor;
+
+                if (newColor.A == 0)
+                {
+                    newColor.A = 255;
+                }
+
+                _selectedShape.Fill = new SolidColorBrush(newColor);
+            }
+        }
+
+        private void OnStrokeColorChanged(ColorPicker sender, ColorChangedEventArgs args)
+        {
+            if (_selectedShape != null)
+            {
+                var newColor = args.NewColor;
+
+                if (newColor.A == 0) newColor.A = 255;
+
+                _originalStroke = new SolidColorBrush(newColor);
+
+                _selectedShape.Stroke = new SolidColorBrush(newColor);
+            }
         }
 
     }

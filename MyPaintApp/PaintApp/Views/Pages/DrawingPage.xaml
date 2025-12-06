@@ -56,6 +56,22 @@
                         <Button.BorderThickness>0,0,0,3</Button.BorderThickness>
                     </Button>
 
+                    <Button Content="Màu nền">
+                        <Button.Flyout>
+                            <Flyout>
+                                <ColorPicker Color="{x:Bind ViewModel.StrokeColor, Mode=TwoWay}" 
+                                             ColorChanged="OnFillColorChanged"
+                                             IsColorSpectrumVisible="False"
+                                             IsColorChannelTextInputVisible="True"/>     
+                            </Flyout>
+                        </Button.Flyout>
+
+                        <Button.BorderBrush>
+                            <SolidColorBrush Color="{x:Bind ViewModel.FillColor, Mode=OneWay}"/>
+                        </Button.BorderBrush>
+                        <Button.BorderThickness>0,0,0,3</Button.BorderThickness>
+                    </Button>
+
                     <TextBlock Text="Độ dày:" VerticalAlignment="Center"/>
                     <Slider Minimum="1" Maximum="10" Value="{x:Bind ViewModel.StrokeThickness, Mode=TwoWay}" Width="100"/>
 

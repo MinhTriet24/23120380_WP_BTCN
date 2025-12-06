@@ -23,8 +23,9 @@ namespace PaintApp.ViewModels
         [ObservableProperty]
         private DoubleCollection strokeDashArray; //null - nét liền, value - nét đứt
 
+
         [ObservableProperty]
-        private SolidColorBrush fillColor = new SolidColorBrush(Colors.Transparent);
+        private Color _fillColor = Colors.Transparent;
 
         public void SetStrokeStyle(string style)
         {
