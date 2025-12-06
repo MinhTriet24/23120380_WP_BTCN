@@ -9,6 +9,7 @@ using Microsoft.UI.Xaml.Shapes;
 using PaintApp.Core.Enums;
 using PaintApp.ViewModels;
 using System;
+using System.Collections.Generic;
 using System.Net.WebSockets;
 using Windows.Foundation;
 using Windows.System;
@@ -40,6 +41,7 @@ namespace PaintApp.Views.Pages
         {
             ViewModel = App.Current.Services.GetService<DrawingViewModel>();
             InitializeComponent();
+            ViewModel.OnCanvasLoaded += ViewModel_OnCanvasLoaded;
         }
 
         private void OnToolClicked(object sender, RoutedEventArgs e)
@@ -787,6 +789,55 @@ namespace PaintApp.Views.Pages
             if (sender is Button btn && btn.Tag is int id)
             {
                 ViewModel.DeleteTemplateCommand.Execute(id);
+            }
+        }
+
+        // Xử lý sự kiện Load hình
+        private void ViewModel_OnCanvasLoaded(List<Shape> shapes, string backgroundColorHex)
+        {
+            // 1. Xóa bảng vẽ cũ
+            DrawingCanvas.Children.Clear();
+
+            // 2. Thêm lại adorner (các nút kéo thả) vì lệnh Clear ở trên đã xóa mất nó
+            DrawingCanvas.Children.Add(ResizeAdorner);
+
+            // 3. Đặt màu nền
+            if (!string.IsNullOrEmpty(backgroundColorHex))
+            {
+                // Em có thể dùng Converter hoặc parse trực tiếp ở đây
+                // ViewModel._canvasBackground = ... (ViewModel đã tự bind màu nền rồi)
+            }
+
+            // 4. Vẽ các hình mới lên Canvas
+            foreach (var shape in shapes)
+            {
+                // Quan trọng: Gán lại sự kiện chuột cho hình mới để còn kéo thả được
+                AttachEventsToShape(shape);
+                DrawingCanvas.Children.Add(shape);
+            }
+        }
+
+        // Khi mở Flyout "Mở bài vẽ", gọi ViewModel load danh sách
+        private void OnOpenFlyoutOpened(object sender, object e)
+        {
+            ViewModel.LoadSavedCanvasesCommand.Execute(null);
+        }
+
+        // Khi click chọn 1 bài vẽ
+        private void OnSavedCanvasClicked(object sender, SelectionChangedEventArgs e)
+        {
+            if (e.AddedItems.Count > 0)
+            {
+                var item = e.AddedItems[0] as PaintApp_Data.Entities.DrawingCanvas;
+                if (item != null)
+                {
+                    // Gọi lệnh mở
+                    ViewModel.OpenCanvasCommand.Execute(item.Id);
+
+                    // Đóng Flyout (popup) lại
+                    if (sender is ListView lv) lv.SelectedIndex = -1;
+                    // Ẩn Flyout (Cần thủ thuật nhỏ hoặc em cứ để nó tự đóng khi click ra ngoài)
+                }
             }
         }
 

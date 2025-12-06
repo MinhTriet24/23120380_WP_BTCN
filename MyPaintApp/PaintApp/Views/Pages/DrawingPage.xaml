@@ -8,6 +8,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:enums="using:PaintApp.Core.Enums"
     xmlns:helpers="using:PaintApp.Core.Helpers"
+    xmlns:data="using:PaintApp_Data.Entities"
     mc:Ignorable="d">
 
     <Page.Resources>
@@ -23,6 +24,36 @@
         </Grid.RowDefinitions>
 
         <CommandBar Grid.Row="0" DefaultLabelPosition="Right">
+            <AppBarButton Icon="OpenFile" Label="Mở bài vẽ">
+                <AppBarButton.Flyout>
+                    <Flyout Opening="OnOpenFlyoutOpened">
+                        <StackPanel Width="300" Spacing="10">
+                            <TextBlock Text="Bài vẽ đã lưu" FontWeight="Bold" Style="{StaticResource SubtitleTextBlockStyle}"/>
+
+                            <ListView ItemsSource="{x:Bind ViewModel.SavedCanvases}" 
+                          SelectionChanged="OnSavedCanvasClicked"
+                          Height="300">
+                                <ListView.ItemTemplate>
+                                    <DataTemplate x:DataType="data:DrawingCanvas">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel>
+                                                <TextBlock Text="{x:Bind Name}" FontWeight="SemiBold"/>
+                                                <TextBlock Text="{x:Bind CreatedAt}" FontSize="10" Foreground="Gray"/>
+                                            </StackPanel>
+                                            <Button Grid.Column="1" Content="X" FontSize="10" Background="Transparent"/>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+                        </StackPanel>
+                    </Flyout>
+                </AppBarButton.Flyout>
+            </AppBarButton>
+
             <AppBarButton Icon="Save" Label="Lưu" 
                   Command="{x:Bind ViewModel.SaveDrawingCommand}"
                   CommandParameter="{x:Bind DrawingCanvas.Children}"/>
