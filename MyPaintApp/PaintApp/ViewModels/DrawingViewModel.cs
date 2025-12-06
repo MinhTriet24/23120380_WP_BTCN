@@ -3,14 +3,15 @@ using CommunityToolkit.Mvvm.Input;
 using Microsoft.UI;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Shapes;
 using PaintApp.Core.Enums;
+using PaintApp.Core.Helpers;
 using PaintApp.Services;
 using PaintApp_Data.Entities;
 using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Windows.UI;
-using PaintApp.Core.Helpers;
 
 namespace PaintApp.ViewModels
 {
@@ -70,6 +71,24 @@ namespace PaintApp.ViewModels
             {
                 StrokeDashArray = new DoubleCollection { 1, 2 };
             }
+        }
+
+        [RelayCommand]
+        public async Task AddToTemplate(Shape shape)
+        {
+            if (shape == null) return;
+
+            string json = ShapeSerializer.SerializeSingle(shape);
+
+            var newTemplate = new ShapeTemplate
+            {
+                Name = $"{shape.GetType().Name} - {DateTime.Now:HH:mm:ss}",
+                ShapeJson = json,
+            };
+
+            await _canvasService.AddTemplateAsync(newTemplate);
+
+            await LoadTemplates();
         }
 
         [RelayCommand]

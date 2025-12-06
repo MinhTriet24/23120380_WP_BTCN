@@ -420,6 +420,20 @@ namespace PaintApp.Views.Pages
             var itemCircle = CreateMenuItem("Convert to Circle", ToolType.Circle);
             var itemLine = CreateMenuItem("Convert to Line", ToolType.Line);
 
+            var itemSaveTemplate = new MenuFlyoutItem
+            {
+                Text = "Save as Template",
+                Icon = new SymbolIcon(Symbol.Save)
+            };
+
+            itemSaveTemplate.Click += (s, e) =>
+            {
+                if (ViewModel.AddToTemplateCommand.CanExecute(shape))
+                {
+                    ViewModel.AddToTemplateCommand.Execute(shape);
+                }
+            };
+
             var itemDelete = new MenuFlyoutItem { Text = "Delete", Icon = new SymbolIcon(Symbol.Delete) };
             itemDelete.Click += (s, e) => DeleteSelectedShape();
 
@@ -431,6 +445,7 @@ namespace PaintApp.Views.Pages
             menu.Items.Add(itemLine);
 
             menu.Items.Add(itemDelete);
+            menu.Items.Add(itemSaveTemplate);
             menu.Items.Add(new MenuFlyoutSeparator());
 
 
