@@ -32,8 +32,8 @@ namespace PaintApp_Data.Context
             {
                 var folder = System.Environment.SpecialFolder.LocalApplicationData;
                 var path = System.Environment.GetFolderPath(folder);
-                var dbPath = System.IO.Path.Join(path, "paint_app.db");
-                optionsBuilder.UseSqlite($"Data Source={DbPath}");
+                var dbPath = System.IO.Path.Join(path, "paint_app_v3.db");
+                optionsBuilder.UseSqlite($"Data Source={dbPath}");
             }
         }
 

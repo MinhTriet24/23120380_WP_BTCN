@@ -132,14 +132,14 @@ namespace PaintApp_Data.Migrations
                         {
                             Id = 1,
                             AvatarIcon = "Assets/DefaultAvatar.jpg",
-                            CreatedAt = new DateTime(2025, 12, 7, 4, 23, 30, 681, DateTimeKind.Local).AddTicks(472),
+                            CreatedAt = new DateTime(2025, 12, 7, 5, 30, 38, 355, DateTimeKind.Local).AddTicks(8580),
                             DefaultCanvasColor = "#FFFFFFFF",
                             DefaultCanvasHeight = 600.0,
                             DefaultCanvasWidth = 800.0,
                             DefaultStrokeColor = "#FF000000",
                             DefaultStrokeSize = 2.0,
                             DefaultStrokeStyle = 0,
-                            LastAccessed = new DateTime(2025, 12, 7, 4, 23, 30, 681, DateTimeKind.Local).AddTicks(483),
+                            LastAccessed = new DateTime(2025, 12, 7, 5, 30, 38, 355, DateTimeKind.Local).AddTicks(8591),
                             ThemePreference = "Dark",
                             UserName = "Admin"
                         });

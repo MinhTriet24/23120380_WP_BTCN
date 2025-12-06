@@ -11,8 +11,8 @@ using PaintApp_Data.Context;
 namespace PaintApp_Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251206212334_AddCanvasAndTemplateTables")]
-    partial class AddCanvasAndTemplateTables
+    [Migration("20251206223038_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -135,14 +135,14 @@ namespace PaintApp_Data.Migrations
                         {
                             Id = 1,
                             AvatarIcon = "Assets/DefaultAvatar.jpg",
-                            CreatedAt = new DateTime(2025, 12, 7, 4, 23, 30, 681, DateTimeKind.Local).AddTicks(472),
+                            CreatedAt = new DateTime(2025, 12, 7, 5, 30, 38, 355, DateTimeKind.Local).AddTicks(8580),
                             DefaultCanvasColor = "#FFFFFFFF",
                             DefaultCanvasHeight = 600.0,
                             DefaultCanvasWidth = 800.0,
                             DefaultStrokeColor = "#FF000000",
                             DefaultStrokeSize = 2.0,
                             DefaultStrokeStyle = 0,
-                            LastAccessed = new DateTime(2025, 12, 7, 4, 23, 30, 681, DateTimeKind.Local).AddTicks(483),
+                            LastAccessed = new DateTime(2025, 12, 7, 5, 30, 38, 355, DateTimeKind.Local).AddTicks(8591),
                             ThemePreference = "Dark",
                             UserName = "Admin"
                         });

@@ -75,14 +75,14 @@ namespace PaintApp.Views.Pages
                 _currentShape.Stroke = new SolidColorBrush(ViewModel.StrokeColor);
                 _currentShape.StrokeThickness = ViewModel.StrokeThickness;
                 if (ViewModel.StrokeDashArray != null)
-                {
-                    var newDash = new DoubleCollection();
-                    foreach (var d in ViewModel.StrokeDashArray)
-                    {
-                        newDash.Add(d);
-                    }
-                    _currentShape.StrokeDashArray = newDash;
-                }
+    {
+        var newDash = new DoubleCollection();
+        foreach (var d in ViewModel.StrokeDashArray)
+        {
+            newDash.Add(d);
+        }
+        _currentShape.StrokeDashArray = newDash;
+    }
                 _currentShape.Fill = new SolidColorBrush(ViewModel.FillColor);
 
                 if (_currentShape is Line)

@@ -73,7 +73,7 @@ namespace PaintApp.ViewModels
         }
 
         [RelayCommand]
-        public async Task SaveDrawing(object collection) // Đổi UIElementCollection -> object
+        public async Task SaveDrawing(object collection)
         {
             var shapes = collection as UIElementCollection;
 
