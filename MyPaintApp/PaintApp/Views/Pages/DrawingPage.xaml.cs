@@ -842,7 +842,56 @@ namespace PaintApp.Views.Pages
         }
 
         private async void OnDeleteCanvasClicked(object sender, RoutedEventArgs e)
-        { }
+        {
+            e.OriginalSource.ToString();
+
+            if (sender is Button btn && btn.Tag is int idToDelete)
+            {
+                bool isDeletingCurrent = (idToDelete == ViewModel.CurrentCanvasId);
+
+                if (isDeletingCurrent)
+                {
+                    ContentDialog deleteDialog = new ContentDialog
+                    {
+                        XamlRoot = this.XamlRoot, 
+                        Title = "Xác nhận xóa",
+                        Content = "Bạn đang xóa bảng vẽ đang mở. Hành động này không thể hoàn tác. Bạn có chắc chắn không?",
+                        PrimaryButtonText = "Xóa ngay",
+                        CloseButtonText = "Hủy bỏ",
+                        DefaultButton = ContentDialogButton.Close
+                    };
+
+                    var result = await deleteDialog.ShowAsync();
+
+                    if (result != ContentDialogResult.Primary) return;
+                }
+
+                await ViewModel.DeleteCanvasCommand.ExecuteAsync(idToDelete);
+
+                if (isDeletingCurrent)
+                {
+                    DrawingCanvas.Children.Clear();
+                    DrawingCanvas.Children.Add(ResizeAdorner); // Giữ lại công cụ resize
+
+                    ViewModel.CreateNewCanvas();
+
+                    ShowNotification("Đã xóa bảng vẽ và tạo trang mới.");
+                }
+            }
+
+        }
+
+        private async void ShowNotification(string message)
+        {
+            ContentDialog dialog = new ContentDialog
+            {
+                XamlRoot = this.XamlRoot,
+                Title = "Thông báo",
+                Content = message,
+                CloseButtonText = "Đóng"
+            };
+            await dialog.ShowAsync();
+        }
 
     }
 }
