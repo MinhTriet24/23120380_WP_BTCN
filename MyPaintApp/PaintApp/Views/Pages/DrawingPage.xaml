@@ -6,9 +6,38 @@
     xmlns:local="using:PaintApp.Views.Pages"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:enums="using:PaintApp.Core.Enums"
     mc:Ignorable="d">
 
     <Grid>
-        <TextBlock Text="This is Drawing Page"></TextBlock>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <CommandBar Grid.Row="0" DefaultLabelPosition="Right">
+            <AppBarButton Icon="TouchPointer" Label="Cursor" Click="OnToolClicked" Tag="Cursor"/>
+            <AppBarSeparator/>
+            <AppBarButton Icon="Edit" Label="Line" Click="OnToolClicked" Tag="Line"/>
+            <AppBarButton Icon="Accept" Label="Rectangle" Click="OnToolClicked" Tag="Rectangle"/>
+            <AppBarButton Icon="World" Label="Oval" Click="OnToolClicked" Tag="Oval"/>
+
+            <CommandBar.Content>
+                <StackPanel Orientation="Horizontal" Spacing="10" Margin="10,5">
+                    <TextBlock Text="Độ dày:" VerticalAlignment="Center"/>
+                    <Slider Minimum="1" Maximum="10" Value="{x:Bind ViewModel.StrokeThickness, Mode=TwoWay}" Width="100"/>
+                </StackPanel>
+            </CommandBar.Content>
+        </CommandBar>
+
+        <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+            <Canvas x:Name="DrawingCanvas" 
+                    Width="1000" Height="800" 
+                    Background="White"
+                    PointerPressed="OnCanvasPointerPressed"
+                    PointerMoved="OnCanvasPointerMoved"
+                    PointerReleased="OnCanvasPointerReleased">
+            </Canvas>
+        </ScrollViewer>
     </Grid>
 </Page>
