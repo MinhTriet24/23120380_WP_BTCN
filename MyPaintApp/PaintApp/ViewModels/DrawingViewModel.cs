@@ -46,7 +46,13 @@ namespace PaintApp.ViewModels
         public DrawingViewModel(CanvasService canvasService)
         {
             _canvasService = canvasService;
-            LoadTemplatesCommand.Execute(null);
+            try
+            {
+                LoadTemplatesCommand.Execute(null);
+            }
+            catch
+            {
+            }
         }
 
         public void SetStrokeStyle(string style)
