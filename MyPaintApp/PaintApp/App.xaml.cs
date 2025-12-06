@@ -1,11 +1,13 @@
-﻿using System;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.UI.Xaml;
+using PaintApp.Core.Interfaces;
+using PaintApp.Services;
+using PaintApp_Data.Context;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
-using Microsoft.UI.Xaml;
-using Microsoft.Extensions.DependencyInjection;
-using PaintApp_Data.Context;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -46,7 +48,7 @@ namespace PaintApp
             // services.AddTransient<MainViewModel>(); 
 
             // C. Đăng ký Services (Logic nghiệp vụ)
-            // services.AddSingleton<IUserProfileService, UserProfileService>();
+            services.AddTransient<IUserProfileService, UserProfileService>();
 
             return services.BuildServiceProvider();
         }
