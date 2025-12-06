@@ -21,6 +21,9 @@
             <AppBarButton Icon="Edit" Label="Line" Click="OnToolClicked" Tag="Line"/>
             <AppBarButton Icon="Accept" Label="Rectangle" Click="OnToolClicked" Tag="Rectangle"/>
             <AppBarButton Icon="World" Label="Oval" Click="OnToolClicked" Tag="Oval"/>
+            <AppBarButton Icon="World" Label="Circle" Click="OnToolClicked" Tag="Circle"/>
+            <AppBarButton Icon="World" Label="Triangle" Click="OnToolClicked" Tag="Triangle"/>
+            <AppBarButton Icon="World" Label="Polygon" Click="OnToolClicked" Tag="Polygon"/>
 
             <CommandBar.Content>
                 <StackPanel Orientation="Horizontal" Spacing="10" Margin="10,5">
