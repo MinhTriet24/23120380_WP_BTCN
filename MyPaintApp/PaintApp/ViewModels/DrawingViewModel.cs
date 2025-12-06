@@ -53,6 +53,9 @@ namespace PaintApp.ViewModels
         [ObservableProperty]
         private int _currentCanvasId = -1;
 
+        [ObservableProperty]
+        private string _canvasName = "Untitled";
+
         public DrawingViewModel(CanvasService canvasService)
         {
             _canvasService = canvasService;
@@ -101,25 +104,54 @@ namespace PaintApp.ViewModels
         }
 
         [RelayCommand]
-        public async Task SaveDrawing(object collection)
+        public async Task SaveDrawing(string name, object collection)
         {
-            var shapes = collection as UIElementCollection;
-
+            var shapes = collection as Microsoft.UI.Xaml.Controls.UIElementCollection;
             if (shapes == null) return;
 
-            string json = ShapeSerializer.Serialize(shapes);
+            string json = PaintApp.Core.Helpers.ShapeSerializer.Serialize(shapes);
 
-            var canvas = new DrawingCanvas
+            if (CurrentCanvasId == -1)
             {
-                Name = "My Art " + DateTime.Now.ToString("HH:mm:ss"),
-                Width = CanvasWidth,
-                Height = CanvasHeight,
-                BackgroundColor = CanvasBackground.Color.ToString(),
-                DataJson = json,
-                UserProfileId = 1
-            };
+                // --- TRƯỜNG HỢP TẠO MỚI ---
+                var newCanvas = new DrawingCanvas
+                {
+                    Name = name, 
+                    Width = CanvasWidth,
+                    Height = CanvasHeight,
+                    BackgroundColor = CanvasBackground.Color.ToString(),
+                    DataJson = json,
+                    UserProfileId = 1,
+                    CreatedAt = DateTime.Now
+                };
 
-            await _canvasService.SaveCanvasAsync(canvas);
+                await _canvasService.SaveCanvasAsync(newCanvas);
+
+                CurrentCanvasId = newCanvas.Id;
+                CanvasName = name;
+
+                SavedCanvases.Insert(0, newCanvas);
+            }
+            else
+            {
+                // --- TRƯỜNG HỢP CẬP NHẬT (GHI ĐÈ) ---
+                var existing = await _canvasService.GetCanvasByIdAsync(CurrentCanvasId);
+                if (existing != null)
+                {
+                    existing.Name = name; 
+                    existing.DataJson = json;
+                    existing.Width = CanvasWidth;
+                    existing.Height = CanvasHeight;
+                    existing.BackgroundColor = CanvasBackground.Color.ToString();
+
+                    await _canvasService.SaveCanvasAsync(existing);
+
+                    var itemInList = System.Linq.Enumerable.FirstOrDefault(SavedCanvases, c => c.Id == CurrentCanvasId);
+                    if (itemInList != null) itemInList.Name = name;
+
+                    CanvasName = name;
+                }
+            }
         }
 
         [RelayCommand]
@@ -153,6 +185,7 @@ namespace PaintApp.ViewModels
             {
                 var shapes = ShapeSerializer.Deserialize(canvasData.DataJson);
                 CurrentCanvasId = canvasData.Id;
+                CanvasName = canvasData.Name;
 
                 OnCanvasLoaded?.Invoke(shapes, canvasData.BackgroundColor);
 
@@ -181,6 +214,7 @@ namespace PaintApp.ViewModels
         public void CreateNewCanvas()
         {
             CurrentCanvasId = -1;
+            CanvasName = "Untitled";
         }
     }
 }
