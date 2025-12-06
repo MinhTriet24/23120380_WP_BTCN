@@ -61,7 +61,6 @@
   <ItemGroup>
     <Folder Include="Core\Constants\" />
     <Folder Include="Core\Helpers\" />
-    <Folder Include="ViewModels\" />
     <Folder Include="Views\Controls\" />
   </ItemGroup>
   <ItemGroup>
