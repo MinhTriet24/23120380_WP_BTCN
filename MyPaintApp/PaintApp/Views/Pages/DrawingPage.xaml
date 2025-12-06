@@ -38,8 +38,16 @@
 
             <CommandBar.Content>
                 <StackPanel Orientation="Horizontal" Spacing="10" Margin="10,5">
+                    
                     <TextBlock Text="Độ dày:" VerticalAlignment="Center"/>
                     <Slider Minimum="1" Maximum="10" Value="{x:Bind ViewModel.StrokeThickness, Mode=TwoWay}" Width="100"/>
+
+                    <ComboBox SelectionChanged="OnStrokeStyleChanged" SelectedIndex="0" Width="100">
+                        <ComboBoxItem Content="Solid" Tag="Solid"/>
+                        <ComboBoxItem Content="Dashed" Tag="Dashed"/>
+                        <ComboBoxItem Content="Dotted" Tag="Dotted"/>
+                    </ComboBox>
+
                 </StackPanel>
             </CommandBar.Content>
         </CommandBar>

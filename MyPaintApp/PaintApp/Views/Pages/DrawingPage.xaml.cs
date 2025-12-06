@@ -59,6 +59,7 @@ namespace PaintApp.Views.Pages
                 _currentShape.Stroke = ViewModel.StrokeColor;
                 _currentShape.StrokeThickness = ViewModel.StrokeThickness;
                 _currentShape.Fill = ViewModel.FillColor;
+                _currentShape.StrokeDashArray = ViewModel.StrokeDashArray;
 
                 if (_currentShape is Line)
                 {
@@ -168,6 +169,20 @@ namespace PaintApp.Views.Pages
             {
                 shape.Width = width;
                 shape.Height = height;
+            }
+        }
+
+        private void OnStrokeStyleChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (ViewModel == null) return;
+
+            if (sender is ComboBox comboBox && comboBox.SelectedItem is ComboBoxItem item)
+            {
+                if (item.Tag != null)
+                {
+                    var style = item.Tag.ToString();
+                    ViewModel.SetStrokeStyle(style);
+                }
             }
         }
 
