@@ -14,6 +14,31 @@
     </Window.SystemBackdrop>
 
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
 
+        <Grid x:Name="AppTitleBar" Height="48" Grid.Row="0">
+            <TextBlock Text="WinUI Paint Master" 
+                       VerticalAlignment="Center" 
+                       Margin="48,0,0,0"
+                       Style="{StaticResource CaptionTextBlockStyle}"/>
+        </Grid>
+
+        <NavigationView x:Name="NavView" 
+                        Grid.Row="1"
+                        SelectionChanged="NavView_SelectionChanged"
+                        PaneDisplayMode="Left">
+
+            <NavigationView.MenuItems>
+                <NavigationViewItem Icon="Home" Content="Trang chủ" Tag="Home"/>
+                <NavigationViewItem Icon="Edit" Content="Bảng vẽ" Tag="Draw"/>
+                <NavigationViewItem Icon="Manage" Content="Quản lý và Thống kê" Tag="Dashboard"/>
+            </NavigationView.MenuItems>
+
+            <Frame x:Name="ContentFrame"/>
+
+        </NavigationView>
     </Grid>
 </Window>
