@@ -792,38 +792,28 @@ namespace PaintApp.Views.Pages
             }
         }
 
-        // Xử lý sự kiện Load hình
         private void ViewModel_OnCanvasLoaded(List<Shape> shapes, string backgroundColorHex)
         {
-            // 1. Xóa bảng vẽ cũ
             DrawingCanvas.Children.Clear();
 
-            // 2. Thêm lại adorner (các nút kéo thả) vì lệnh Clear ở trên đã xóa mất nó
             DrawingCanvas.Children.Add(ResizeAdorner);
 
-            // 3. Đặt màu nền
             if (!string.IsNullOrEmpty(backgroundColorHex))
             {
-                // Em có thể dùng Converter hoặc parse trực tiếp ở đây
-                // ViewModel._canvasBackground = ... (ViewModel đã tự bind màu nền rồi)
             }
 
-            // 4. Vẽ các hình mới lên Canvas
             foreach (var shape in shapes)
             {
-                // Quan trọng: Gán lại sự kiện chuột cho hình mới để còn kéo thả được
                 AttachEventsToShape(shape);
                 DrawingCanvas.Children.Add(shape);
             }
         }
 
-        // Khi mở Flyout "Mở bài vẽ", gọi ViewModel load danh sách
         private void OnOpenFlyoutOpened(object sender, object e)
         {
             ViewModel.LoadSavedCanvasesCommand.Execute(null);
         }
 
-        // Khi click chọn 1 bài vẽ
         private void OnSavedCanvasClicked(object sender, SelectionChangedEventArgs e)
         {
             if (e.AddedItems.Count > 0)
@@ -831,12 +821,9 @@ namespace PaintApp.Views.Pages
                 var item = e.AddedItems[0] as PaintApp_Data.Entities.DrawingCanvas;
                 if (item != null)
                 {
-                    // Gọi lệnh mở
                     ViewModel.OpenCanvasCommand.Execute(item.Id);
 
-                    // Đóng Flyout (popup) lại
                     if (sender is ListView lv) lv.SelectedIndex = -1;
-                    // Ẩn Flyout (Cần thủ thuật nhỏ hoặc em cứ để nó tự đóng khi click ra ngoài)
                 }
             }
         }
@@ -847,17 +834,14 @@ namespace PaintApp.Views.Pages
 
             if (sender is Button btn && btn.Tag is int idToDelete)
             {
-                // Kiểm tra xem bài muốn xóa có phải là bài đang mở không
                 bool isDeletingCurrent = (idToDelete == ViewModel.CurrentCanvasId);
 
                 if (isDeletingCurrent)
                 {
-                    // Nếu xóa bài đang mở -> Gọi hàm chung có xác nhận kỹ càng
                     await DeleteCurrentCanvasWithConfirmation();
                 }
                 else
                 {
-                    // Nếu xóa bài khác -> Xóa ngay (hoặc có thể hỏi xác nhận nhẹ nhàng nếu muốn)
                     await ViewModel.DeleteCanvasCommand.ExecuteAsync(idToDelete);
                 }
             }
@@ -931,6 +915,41 @@ namespace PaintApp.Views.Pages
             DrawingCanvas.Children.Add(ResizeAdorner);
 
             DrawingCanvas.Background = new SolidColorBrush(Colors.White); 
+        }
+
+        private async void OnSaveButtonClicked(object sender, RoutedEventArgs e)
+        {
+            TextBox nameInput = new TextBox
+            {
+                PlaceholderText = "Nhập tên bài vẽ...",
+                Text = ViewModel.CurrentCanvasId == -1 ? $"My Art {DateTime.Now:dd/MM HH:mm}" : ViewModel.CanvasName
+            };
+
+            ContentDialog dialog = new ContentDialog
+            {
+                XamlRoot = this.XamlRoot,
+                Title = "Lưu bài vẽ",
+                Content = nameInput,
+                PrimaryButtonText = "Lưu",
+                CloseButtonText = "Hủy",
+                DefaultButton = ContentDialogButton.Primary
+            };
+
+            var result = await dialog.ShowAsync();
+
+            if (result == ContentDialogResult.Primary)
+            {
+                string nameToSave = nameInput.Text.Trim();
+                if (string.IsNullOrEmpty(nameToSave))
+                {
+                    ShowNotification("Tên bài vẽ không được để trống!");
+                    return;
+                }
+
+                await ViewModel.SaveDrawing(nameToSave, DrawingCanvas.Children);
+
+                ShowNotification("Đã lưu bài vẽ thành công!");
+            }
         }
 
     }

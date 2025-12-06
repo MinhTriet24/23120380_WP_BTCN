@@ -57,9 +57,7 @@
                 </AppBarButton.Flyout>
             </AppBarButton>
 
-            <AppBarButton Icon="Save" Label="Lưu" 
-                  Command="{x:Bind ViewModel.SaveDrawingCommand}"
-                  CommandParameter="{x:Bind DrawingCanvas.Children}"/>
+            <AppBarButton Icon="Save" Label="Lưu" Click="OnSaveButtonClicked"/>
 
             <AppBarButton Icon="Copy" Label="Templates">
                 <AppBarButton.Flyout>
