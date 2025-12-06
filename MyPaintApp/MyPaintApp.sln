@@ -5,6 +5,8 @@ VisualStudioVersion = 17.14.36518.9 d17.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PaintApp", "PaintApp\PaintApp.csproj", "{5DB6CCEF-E00A-4B58-A65B-B26CFF1882A6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PaintApp_Data", "PaintApp_Data\PaintApp_Data.csproj", "{2BBF712A-C901-4AD2-B5EA-7CFA6AB550F4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|ARM64 = Debug|ARM64
@@ -33,6 +35,18 @@ Global
 		{5DB6CCEF-E00A-4B58-A65B-B26CFF1882A6}.Release|x86.ActiveCfg = Release|x86
 		{5DB6CCEF-E00A-4B58-A65B-B26CFF1882A6}.Release|x86.Build.0 = Release|x86
 		{5DB6CCEF-E00A-4B58-A65B-B26CFF1882A6}.Release|x86.Deploy.0 = Release|x86
+		{2BBF712A-C901-4AD2-B5EA-7CFA6AB550F4}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{2BBF712A-C901-4AD2-B5EA-7CFA6AB550F4}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{2BBF712A-C901-4AD2-B5EA-7CFA6AB550F4}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{2BBF712A-C901-4AD2-B5EA-7CFA6AB550F4}.Debug|x64.Build.0 = Debug|Any CPU
+		{2BBF712A-C901-4AD2-B5EA-7CFA6AB550F4}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{2BBF712A-C901-4AD2-B5EA-7CFA6AB550F4}.Debug|x86.Build.0 = Debug|Any CPU
+		{2BBF712A-C901-4AD2-B5EA-7CFA6AB550F4}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{2BBF712A-C901-4AD2-B5EA-7CFA6AB550F4}.Release|ARM64.Build.0 = Release|Any CPU
+		{2BBF712A-C901-4AD2-B5EA-7CFA6AB550F4}.Release|x64.ActiveCfg = Release|Any CPU
+		{2BBF712A-C901-4AD2-B5EA-7CFA6AB550F4}.Release|x64.Build.0 = Release|Any CPU
+		{2BBF712A-C901-4AD2-B5EA-7CFA6AB550F4}.Release|x86.ActiveCfg = Release|Any CPU
+		{2BBF712A-C901-4AD2-B5EA-7CFA6AB550F4}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
