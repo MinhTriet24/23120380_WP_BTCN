@@ -12,6 +12,8 @@
 
     <Page.Resources>
         <helpers:ToolToBrushConverter x:Key="ToolHighlightConverter"/>
+
+        <helpers:ColorToBrushConverter x:Key="ColorToBrushConverter"/>
     </Page.Resources>
 
     <Grid>
@@ -38,7 +40,22 @@
 
             <CommandBar.Content>
                 <StackPanel Orientation="Horizontal" Spacing="10" Margin="10,5">
-                    
+
+                    <Button Content="Màu nét">
+                        <Button.Flyout>
+                            <Flyout>
+                                <ColorPicker 
+                                Color="{x:Bind ViewModel.StrokeColor, Mode=TwoWay}" 
+                                IsColorSpectrumVisible="False"
+                                IsColorChannelTextInputVisible="True"/>
+                            </Flyout>
+                        </Button.Flyout>
+                        <Button.BorderBrush>
+                            <SolidColorBrush Color="{x:Bind ViewModel.StrokeColor, Mode=OneWay}"/>
+                        </Button.BorderBrush>
+                        <Button.BorderThickness>0,0,0,3</Button.BorderThickness>
+                    </Button>
+
                     <TextBlock Text="Độ dày:" VerticalAlignment="Center"/>
                     <Slider Minimum="1" Maximum="10" Value="{x:Bind ViewModel.StrokeThickness, Mode=TwoWay}" Width="100"/>
 

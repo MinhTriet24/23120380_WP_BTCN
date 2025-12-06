@@ -2,6 +2,7 @@
 using Microsoft.UI;
 using Microsoft.UI.Xaml.Media;
 using PaintApp.Core.Enums;
+using Windows.UI; // Chứa struct Color
 
 namespace PaintApp.ViewModels
 {
@@ -14,10 +15,13 @@ namespace PaintApp.ViewModels
         private double strokeThickness = 2.0;
 
         [ObservableProperty]
-        private DoubleCollection strokeDashArray; //null - nét liền, value - nét đứt
+        [NotifyPropertyChangedFor(nameof(StrokeBrush))] // Khi màu đổi, tự báo cho Brush đổi theo
+        private Color _strokeColor = Colors.Black;
+
+        public SolidColorBrush StrokeBrush => new SolidColorBrush(StrokeColor);
 
         [ObservableProperty]
-        private SolidColorBrush strokeColor = new SolidColorBrush(Colors.Black);
+        private DoubleCollection strokeDashArray; //null - nét liền, value - nét đứt
 
         [ObservableProperty]
         private SolidColorBrush fillColor = new SolidColorBrush(Colors.Transparent);

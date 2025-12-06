@@ -28,8 +28,8 @@ namespace PaintApp.Views.Pages
         private Shape _currentShape;
         public DrawingPage()
         {
-            InitializeComponent();
             ViewModel = App.Current.Services.GetService<DrawingViewModel>();
+            InitializeComponent();
         }
 
         private void OnToolClicked(object sender, RoutedEventArgs e)
@@ -56,7 +56,7 @@ namespace PaintApp.Views.Pages
 
             if (_currentShape != null)
             {
-                _currentShape.Stroke = ViewModel.StrokeColor;
+                _currentShape.Stroke = new SolidColorBrush(ViewModel.StrokeColor);
                 _currentShape.StrokeThickness = ViewModel.StrokeThickness;
                 _currentShape.Fill = ViewModel.FillColor;
                 _currentShape.StrokeDashArray = ViewModel.StrokeDashArray;
