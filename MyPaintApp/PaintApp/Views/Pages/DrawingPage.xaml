@@ -7,7 +7,12 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:enums="using:PaintApp.Core.Enums"
+    xmlns:helpers="using:PaintApp.Core.Helpers"
     mc:Ignorable="d">
+
+    <Page.Resources>
+        <helpers:ToolToBrushConverter x:Key="ToolHighlightConverter"/>
+    </Page.Resources>
 
     <Grid>
         <Grid.RowDefinitions>
@@ -18,12 +23,18 @@
         <CommandBar Grid.Row="0" DefaultLabelPosition="Right">
             <AppBarButton Icon="TouchPointer" Label="Cursor" Click="OnToolClicked" Tag="Cursor"/>
             <AppBarSeparator/>
-            <AppBarButton Icon="Edit" Label="Line" Click="OnToolClicked" Tag="Line"/>
-            <AppBarButton Icon="Accept" Label="Rectangle" Click="OnToolClicked" Tag="Rectangle"/>
-            <AppBarButton Icon="World" Label="Oval" Click="OnToolClicked" Tag="Oval"/>
-            <AppBarButton Icon="World" Label="Circle" Click="OnToolClicked" Tag="Circle"/>
-            <AppBarButton Icon="World" Label="Triangle" Click="OnToolClicked" Tag="Triangle"/>
-            <AppBarButton Icon="World" Label="Polygon" Click="OnToolClicked" Tag="Polygon"/>
+            <AppBarButton Icon="Edit" Label="Line" Click="OnToolClicked" Tag="Line"
+                          Background="{x:Bind ViewModel.CurrentTool, Mode=OneWay, Converter={StaticResource ToolHighlightConverter}, ConverterParameter='Line'}"/>
+            <AppBarButton Icon="Accept" Label="Rectangle" Click="OnToolClicked" Tag="Rectangle"
+                          Background="{x:Bind ViewModel.CurrentTool, Mode=OneWay, Converter={StaticResource ToolHighlightConverter}, ConverterParameter='Rectangle'}"/>
+            <AppBarButton Icon="World" Label="Oval" Click="OnToolClicked" Tag="Oval"
+                          Background="{x:Bind ViewModel.CurrentTool, Mode=OneWay, Converter={StaticResource ToolHighlightConverter}, ConverterParameter='Oval'}"/>
+            <AppBarButton Icon="World" Label="Circle" Click="OnToolClicked" Tag="Circle"
+                          Background="{x:Bind ViewModel.CurrentTool, Mode=OneWay, Converter={StaticResource ToolHighlightConverter}, ConverterParameter='Circle'}"/>
+            <AppBarButton Icon="World" Label="Triangle" Click="OnToolClicked" Tag="Triangle"
+                          Background="{x:Bind ViewModel.CurrentTool, Mode=OneWay, Converter={StaticResource ToolHighlightConverter}, ConverterParameter='Triangle'}"/>
+            <AppBarButton Icon="World" Label="Polygon" Click="OnToolClicked" Tag="Polygon"
+                          Background="{x:Bind ViewModel.CurrentTool, Mode=OneWay, Converter={StaticResource ToolHighlightConverter}, ConverterParameter='Polygon'}"/>
 
             <CommandBar.Content>
                 <StackPanel Orientation="Horizontal" Spacing="10" Margin="10,5">
