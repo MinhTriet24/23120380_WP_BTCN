@@ -48,6 +48,7 @@ namespace PaintApp
             // B. Đăng ký ViewModels
             services.AddTransient<HomeViewModel>();
             services.AddTransient<DrawingViewModel>();
+            services.AddTransient<DashboardViewModel>();
 
             // C. Đăng ký Services (Logic nghiệp vụ)
             services.AddTransient<IUserProfileService, UserProfileService>();

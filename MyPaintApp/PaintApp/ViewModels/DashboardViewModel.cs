@@ -29,12 +29,10 @@ namespace PaintApp.ViewModels
         [RelayCommand]
         public async Task LoadData()
         {
-            // 1. Load Profiles
             var profiles = await _profileService.GetAllProfilesAsync();
             Profiles.Clear();
             foreach (var p in profiles) Profiles.Add(p);
 
-            // 2. Load Thống kê (Dùng hàm GetAll có sẵn của CanvasService để đếm)
             var drawings = await _canvasService.GetAllCanvasesAsync();
             var templates = await _canvasService.GetAllTemplatesAsync();
 
@@ -45,7 +43,6 @@ namespace PaintApp.ViewModels
         [RelayCommand]
         public async Task AddProfile(string userName)
         {
-            // Tạo cấu hình mặc định cho người dùng mới
             var newProfile = new UserProfile
             {
                 UserName = userName,
@@ -57,7 +54,7 @@ namespace PaintApp.ViewModels
             };
 
             await _profileService.AddProfileAsync(newProfile);
-            await LoadData(); // Refresh lại danh sách
+            await LoadData();
         }
 
         [RelayCommand]

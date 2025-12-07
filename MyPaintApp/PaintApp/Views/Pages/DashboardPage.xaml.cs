@@ -4,6 +4,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using PaintApp.ViewModels;
 using System;
+using System.Collections.Generic;
 
 namespace PaintApp.Views.Pages
 {
@@ -16,11 +17,11 @@ namespace PaintApp.Views.Pages
             ViewModel = App.Current.Services.GetService<DashboardViewModel>();
             this.InitializeComponent();
 
-            // Load dữ liệu khi trang được mở
             this.Loaded += (s, e) => ViewModel.LoadDataCommand.Execute(null);
+
+            BreadcrumbNav.ItemsSource = new List<string> { "Trang chủ", "Dashboard & Quản lý" };
         }
 
-        // --- XỬ LÝ NÚT THÊM PROFILE ---
         private async void OnAddProfileClicked(object sender, RoutedEventArgs e)
         {
             TextBox input = new TextBox { PlaceholderText = "Nhập tên người dùng..." };
@@ -41,7 +42,6 @@ namespace PaintApp.Views.Pages
             }
         }
 
-        // --- XỬ LÝ NÚT XÓA PROFILE ---
         private async void OnDeleteProfileClicked(object sender, RoutedEventArgs e)
         {
             if (sender is Button btn && btn.Tag is PaintApp_Data.Entities.UserProfile profile)
@@ -62,7 +62,6 @@ namespace PaintApp.Views.Pages
             }
         }
 
-        // --- QUAN TRỌNG: CHUYỂN HƯỚNG SANG TRANG VẼ ---
         private void OnSelectProfileClicked(object sender, RoutedEventArgs e)
         {
             if (sender is Button btn && btn.Tag is PaintApp_Data.Entities.UserProfile profile)

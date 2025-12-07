@@ -16,12 +16,9 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <BreadcrumbBar Grid.Row="0" Margin="0,0,0,20">
-            <BreadcrumbBar.ItemsSource>
-                <x:String>Home</x:String>
-                <x:String>Dashboard &amp; Quản lý</x:String>
-            </BreadcrumbBar.ItemsSource>
+        <BreadcrumbBar Grid.Row="0" Margin="0,0,0,20" x:Name="BreadcrumbNav">
         </BreadcrumbBar>
+
 
         <StackPanel Grid.Row="1" Spacing="10" Margin="0,0,0,30">
             <TextBlock Text="Tổng quan hệ thống" Style="{StaticResource TitleTextBlockStyle}"/>
