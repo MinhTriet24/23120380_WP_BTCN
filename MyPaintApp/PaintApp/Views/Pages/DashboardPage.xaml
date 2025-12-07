@@ -6,9 +6,104 @@
     xmlns:local="using:PaintApp.Views.Pages"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:data="using:PaintApp_Data.Entities"
     mc:Ignorable="d">
 
-    <Grid>
-        <TextBlock Text="This is Dashboard Page"></TextBlock>
+    <Grid Padding="24" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <BreadcrumbBar Grid.Row="0" Margin="0,0,0,20">
+            <BreadcrumbBar.ItemsSource>
+                <x:String>Home</x:String>
+                <x:String>Dashboard &amp; Quản lý</x:String>
+            </BreadcrumbBar.ItemsSource>
+        </BreadcrumbBar>
+
+        <StackPanel Grid.Row="1" Spacing="10" Margin="0,0,0,30">
+            <TextBlock Text="Tổng quan hệ thống" Style="{StaticResource TitleTextBlockStyle}"/>
+
+            <Grid ColumnSpacing="20">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <Border Grid.Column="0" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" Padding="20" CornerRadius="8">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <FontIcon Glyph="&#xE790;" FontFamily="Segoe MDL2 Assets"/>
+                            <TextBlock Text="Tổng số bài vẽ" Foreground="Gray"/>
+                        </StackPanel>
+                        <TextBlock Text="{x:Bind ViewModel.TotalDrawings, Mode=OneWay}" FontSize="48" FontWeight="Bold" Foreground="DodgerBlue"/>
+                        <Rectangle Height="5" Width="100" HorizontalAlignment="Left" Fill="DodgerBlue" RadiusX="2" RadiusY="2"/>
+                    </StackPanel>
+                </Border>
+
+                <Border Grid.Column="1" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" Padding="20" CornerRadius="8">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <FontIcon Glyph="&#xE74C;" FontFamily="Segoe MDL2 Assets"/>
+                            <TextBlock Text="Mẫu hình (Templates)" Foreground="Gray"/>
+                        </StackPanel>
+                        <TextBlock Text="{x:Bind ViewModel.TotalTemplates, Mode=OneWay}" FontSize="48" FontWeight="Bold" Foreground="OrangeRed"/>
+                        <Rectangle Height="5" Width="80" HorizontalAlignment="Left" Fill="OrangeRed" RadiusX="2" RadiusY="2"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </StackPanel>
+
+        <Grid Grid.Row="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="0" Margin="0,0,0,10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="Danh sách người dùng" Style="{StaticResource SubtitleTextBlockStyle}" VerticalAlignment="Center"/>
+                <Button Grid.Column="1" Content="Tạo Profile Mới" Style="{StaticResource AccentButtonStyle}" Click="OnAddProfileClicked"/>
+            </Grid>
+
+            <ListView Grid.Row="1" ItemsSource="{x:Bind ViewModel.Profiles, Mode=OneWay}" SelectionMode="None">
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="data:UserProfile">
+                        <Grid Padding="12" Background="{ThemeResource LayerFillColorDefaultBrush}" CornerRadius="4" Margin="0,4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <PersonPicture ProfilePicture="{x:Bind AvatarIcon}" Width="40" Margin="0,0,12,0"/>
+
+                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                <TextBlock Text="{x:Bind UserName}" FontWeight="Bold"/>
+                                <TextBlock FontSize="12" Foreground="Gray">
+                                    <Run Text="Canvas: "/>
+                                    <Run Text="{x:Bind DefaultCanvasWidth}"/>
+                                    <Run Text="x"/>
+                                    <Run Text="{x:Bind DefaultCanvasHeight}"/>
+                                </TextBlock>
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8">
+                                <Button Content="Chọn &amp; Vẽ" Click="OnSelectProfileClicked" Tag="{x:Bind}"/>
+
+                                <Button Click="OnDeleteProfileClicked" Tag="{x:Bind}" Background="Transparent" BorderThickness="0">
+                                    <FontIcon Glyph="&#xE74D;" Foreground="Red"/>
+                                </Button>
+                            </StackPanel>
+                        </Grid>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </Grid>
     </Grid>
 </Page>
