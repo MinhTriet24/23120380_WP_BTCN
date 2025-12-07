@@ -805,23 +805,32 @@ namespace PaintApp.Views.Pages
         {
             if (e.AddedItems.Count == 0) return;
 
-            var template = e.AddedItems[0] as PaintApp_Data.Entities.ShapeTemplate; // Nhớ using Entity
+            var template = e.AddedItems[0] as PaintApp_Data.Entities.ShapeTemplate;
             if (template == null) return;
 
-            var shapes = PaintApp.Core.Helpers.ShapeSerializer.Deserialize(template.ShapeJson);
-
-            if (shapes.Count > 0)
+            try
             {
-                var newShape = shapes[0];
+                var shapes = PaintApp.Core.Helpers.ShapeSerializer.Deserialize(template.ShapeJson);
 
-                Canvas.SetLeft(newShape, 100);
-                Canvas.SetTop(newShape, 100);
+                if (shapes != null && shapes.Count > 0)
+                {
+                    var newShape = shapes[0];
 
-                AttachEventsToShape(newShape);
+                    Canvas.SetLeft(newShape, 100);
+                    Canvas.SetTop(newShape, 100);
 
-                DrawingCanvas.Children.Add(newShape);
+                    AttachEventsToShape(newShape);
 
-                SelectShape(newShape);
+                    DrawingCanvas.Children.Add(newShape);
+
+                    SelectShape(newShape);
+                }
+            }
+            catch (Exception ex)
+            {
+                ShowNotification("Không thể mở mẫu hình này (Dữ liệu cũ hoặc bị lỗi).");
+
+                System.Diagnostics.Debug.WriteLine($"Template Error: {ex.Message}");
             }
 
             (sender as ListView).SelectedIndex = -1;
