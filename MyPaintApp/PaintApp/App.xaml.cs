@@ -45,14 +45,14 @@ namespace PaintApp
 
             services.AddDbContext<AppDbContext>();
 
+            // C. Đăng ký Services (Logic nghiệp vụ)
+            services.AddTransient<IUserProfileService, UserProfileService>();
+            services.AddTransient<CanvasService>();
+
             // B. Đăng ký ViewModels
             services.AddTransient<HomeViewModel>();
             services.AddTransient<DrawingViewModel>();
             services.AddTransient<DashboardViewModel>();
-
-            // C. Đăng ký Services (Logic nghiệp vụ)
-            services.AddTransient<IUserProfileService, UserProfileService>();
-            services.AddTransient<CanvasService>();
 
             return services.BuildServiceProvider();
         }

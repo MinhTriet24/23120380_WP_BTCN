@@ -15,7 +15,7 @@ namespace PaintApp.Core.Interfaces
 
         //Task Update
 
-        //Task Delete
+        Task DeleteProfileAsync(int id);
 
     }
 }

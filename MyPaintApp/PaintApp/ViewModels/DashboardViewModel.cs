@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using PaintApp.Core.Interfaces;
 using PaintApp.Services;
 using PaintApp_Data.Entities;
 using System;
@@ -10,7 +11,7 @@ namespace PaintApp.ViewModels
 {
     public partial class DashboardViewModel : ObservableObject
     {
-        private readonly UserProfileService _profileService;
+        private readonly IUserProfileService _profileService;
         private readonly CanvasService _canvasService;
 
         // Danh sách hiển thị trên UI
@@ -20,7 +21,7 @@ namespace PaintApp.ViewModels
         [ObservableProperty] private int _totalDrawings;
         [ObservableProperty] private int _totalTemplates;
 
-        public DashboardViewModel(UserProfileService profileService, CanvasService canvasService)
+        public DashboardViewModel(IUserProfileService profileService, CanvasService canvasService)
         {
             _profileService = profileService;
             _canvasService = canvasService;
