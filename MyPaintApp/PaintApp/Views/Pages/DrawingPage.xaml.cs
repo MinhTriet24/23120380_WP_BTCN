@@ -428,14 +428,6 @@ namespace PaintApp.Views.Pages
                 Icon = new SymbolIcon(Symbol.Save)
             };
 
-            itemSaveTemplate.Click += (s, e) =>
-            {
-                if (ViewModel.AddToTemplateCommand.CanExecute(shape))
-                {
-                    ViewModel.AddToTemplateCommand.Execute(shape);
-                }
-            };
-
             var itemDelete = new MenuFlyoutItem { Text = "Delete", Icon = new SymbolIcon(Symbol.Delete) };
             itemDelete.Click += (s, e) => DeleteSelectedShape();
 
@@ -447,6 +439,7 @@ namespace PaintApp.Views.Pages
             menu.Items.Add(itemLine);
 
             menu.Items.Add(itemDelete);
+            menu.Items.Add(itemSaveTemplate);
             itemSaveTemplate.Click += async (s, e) =>
             {
                 TextBox nameInput = new TextBox
