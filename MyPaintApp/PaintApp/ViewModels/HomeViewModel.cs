@@ -1,10 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using System.Collections.ObjectModel;
-using System.Threading.Tasks;
 using PaintApp.Core.Interfaces;
 using PaintApp_Data.Entities;
 using System;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace PaintApp.ViewModels
 {
@@ -41,22 +42,34 @@ namespace PaintApp.ViewModels
         }
 
         [RelayCommand]
-        public async Task AddProfile(string name)
+        public async Task AddProfile(UserProfile profile)
         {
-
-            if(String.IsNullOrWhiteSpace(name))
-            {
-                return;
-            }
-
-            var profile = new UserProfile
-            {
-                UserName = name,
-            };
+            if (profile == null || string.IsNullOrWhiteSpace(profile.UserName)) return;
 
             await _profileService.AddProfileAsync(profile);
 
-            Profiles.Add(profile);
+            if (profile.Id == 0)
+            {
+                await LoadProfiles();
+            }
+            else
+            {
+                var existingProfile = Profiles.FirstOrDefault(p => p.Id == profile.Id);
+                if (existingProfile != null)
+                {
+                    // --- CẬP NHẬT TẤT CẢ CÁC THUỘC TÍNH ---
+                    existingProfile.UserName = profile.UserName;
+                    existingProfile.ThemePreference = profile.ThemePreference;
+                    existingProfile.DefaultCanvasWidth = profile.DefaultCanvasWidth;
+                    existingProfile.DefaultCanvasHeight = profile.DefaultCanvasHeight;
+                    existingProfile.DefaultCanvasColor = profile.DefaultCanvasColor;
+                    existingProfile.DefaultStrokeSize = profile.DefaultStrokeSize;
+                    existingProfile.DefaultStrokeColor = profile.DefaultStrokeColor;
+                    existingProfile.DefaultStrokeStyle = profile.DefaultStrokeStyle;
+                    existingProfile.LastAccessed = DateTime.Now;
+                }
+                await LoadProfiles();
+            }
         }
 
     }
