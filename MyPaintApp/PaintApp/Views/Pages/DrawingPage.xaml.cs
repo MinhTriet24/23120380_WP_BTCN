@@ -5,6 +5,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Navigation;
 using Microsoft.UI.Xaml.Shapes;
 using PaintApp.Core.Enums;
 using PaintApp.ViewModels;
@@ -13,6 +14,7 @@ using System.Collections.Generic;
 using System.Net.WebSockets;
 using Windows.Foundation;
 using Windows.System;
+using Windows.UI;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -1038,6 +1040,88 @@ namespace PaintApp.Views.Pages
                 {
                     flyout.Hide();
                 }
+            }
+        }
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            base.OnNavigatedTo(e);
+
+            if (e.Parameter is PaintApp_Data.Entities.UserProfile profile)
+            {
+                ViewModel.CanvasWidth = profile.DefaultCanvasWidth;
+                ViewModel.CanvasHeight = profile.DefaultCanvasHeight;
+
+                if (!string.IsNullOrEmpty(profile.DefaultCanvasColor))
+                {
+                    Color bgColor = ParseColorHex(profile.DefaultCanvasColor);
+                    ViewModel.CanvasBackground = new SolidColorBrush(bgColor);
+                }
+
+                ViewModel.StrokeThickness = profile.DefaultStrokeSize;
+
+                if (!string.IsNullOrEmpty(profile.DefaultStrokeColor))
+                {
+                    ViewModel.StrokeColor = ParseColorHex(profile.DefaultStrokeColor);
+                }
+
+                string styleName = "Solid";
+                switch (profile.DefaultStrokeStyle)
+                {
+                    case 1: styleName = "Dashed"; break;
+                    case 2: styleName = "Dotted"; break;
+                    default: styleName = "Solid"; break;
+                }
+                ViewModel.SetStrokeStyle(styleName);
+
+                if (!string.IsNullOrEmpty(profile.ThemePreference))
+                {
+                    if (profile.ThemePreference == "Light") this.RequestedTheme = ElementTheme.Light;
+                    else if (profile.ThemePreference == "Dark") this.RequestedTheme = ElementTheme.Dark;
+                    else this.RequestedTheme = ElementTheme.Default; // System
+                }
+
+                ViewModel.CreateNewCanvas();
+
+                ResetCanvasUI();
+
+                DrawingCanvas.Background = ViewModel.CanvasBackground;
+
+                ShowNotification($"Xin chào {profile.UserName}, đã tải cấu hình cá nhân thành công!");
+            }
+        }
+
+        private Windows.UI.Color ParseColorHex(string hex)
+        {
+            try
+            {
+                hex = hex.Replace("#", "");
+                byte a = 255;
+                byte r = 0;
+                byte g = 0;
+                byte b = 0;
+
+                // Dạng 8 ký tự: AARRGGBB
+                if (hex.Length == 8)
+                {
+                    a = byte.Parse(hex.Substring(0, 2), System.Globalization.NumberStyles.HexNumber);
+                    r = byte.Parse(hex.Substring(2, 2), System.Globalization.NumberStyles.HexNumber);
+                    g = byte.Parse(hex.Substring(4, 2), System.Globalization.NumberStyles.HexNumber);
+                    b = byte.Parse(hex.Substring(6, 2), System.Globalization.NumberStyles.HexNumber);
+                }
+                // Dạng 6 ký tự: RRGGBB
+                else if (hex.Length == 6)
+                {
+                    r = byte.Parse(hex.Substring(0, 2), System.Globalization.NumberStyles.HexNumber);
+                    g = byte.Parse(hex.Substring(2, 2), System.Globalization.NumberStyles.HexNumber);
+                    b = byte.Parse(hex.Substring(4, 2), System.Globalization.NumberStyles.HexNumber);
+                }
+
+                return Windows.UI.Color.FromArgb(a, r, g, b);
+            }
+            catch
+            {
+                return Microsoft.UI.Colors.Black; 
             }
         }
 
