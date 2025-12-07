@@ -22,6 +22,9 @@
 
         <StackPanel Grid.Row="0" Margin="0,0,0,32">
             <TextBlock Text="Xin chào!" Style="{StaticResource TitleTextBlockStyle}"/>
+            <TextBlock Text="Chào mừng bạn đến với ứng dụng vẽ vector hiện đại được thiết kế theo chuẩn Fluent Design của Windows 11. Hãy bắt đầu bằng cách chọn hoặc tạo Profile cá nhân để trải nghiệm không gian sáng tạo được tùy chỉnh riêng cho bạn. Tận dụng kho Template thông minh và các công cụ vẽ đa dạng để hiện thực hóa ý tưởng của bạn ngay hôm nay."
+                       TextWrapping="WrapWholeWords"
+                       Padding="10,10,10,10"/>
             <TextBlock Text="Chọn hồ sơ của bạn để bắt đầu vẽ" Style="{StaticResource BodyTextBlockStyle}" Opacity="0.6"/>
         </StackPanel>
 
