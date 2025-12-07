@@ -105,7 +105,6 @@ namespace PaintApp.ViewModels
             {
                 Name = name, 
                 ShapeJson = json,
-                CreatedAt = DateTime.Now
             };
 
             await _canvasService.AddTemplateAsync(newTemplate);

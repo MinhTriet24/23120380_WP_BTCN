@@ -447,46 +447,49 @@ namespace PaintApp.Views.Pages
             menu.Items.Add(itemLine);
 
             menu.Items.Add(itemDelete);
-            menu.Items.Add(itemSaveTemplate);
+            itemSaveTemplate.Click += async (s, e) =>
+            {
+                TextBox nameInput = new TextBox
+                {
+                    PlaceholderText = "Nhập tên mẫu hình...",
+                    Text = $"{shape.GetType().Name} - {DateTime.Now:dd/MM HH:mm}"
+                };
+
+                ContentDialog dialog = new ContentDialog
+                {
+                    XamlRoot = this.XamlRoot,
+                    Title = "Lưu Mẫu Hình (Template)",
+                    Content = nameInput,
+                    PrimaryButtonText = "Lưu",
+                    CloseButtonText = "Hủy",
+                    DefaultButton = ContentDialogButton.Primary
+                };
+
+                var result = await dialog.ShowAsync();
+
+                if (result == ContentDialogResult.Primary)
+                {
+                    string nameToSave = nameInput.Text.Trim();
+                    if (string.IsNullOrEmpty(nameToSave))
+                    {
+                        ShowNotification("Tên mẫu hình không được để trống!");
+                        return;
+                    }
+
+                    if (ViewModel.AddToTemplateCommand.CanExecute(null))
+                    {
+                        ViewModel.AddToTemplateCommand.Execute(new object[] { nameToSave, shape });
+
+                        ShowNotification($"Đã lưu mẫu hình '{nameToSave}' thành công!");
+                    }
+                }
+            };
             menu.Items.Add(new MenuFlyoutSeparator());
 
 
-            // Gán menu vào hình
             shape.ContextFlyout = menu;
         }
 
-        private async void OnSaveTemplateClicked(object sender, RoutedEventArgs e)
-        {
-            if (_selectedShape == null)
-            {
-                ShowNotification("Vui lòng chọn một hình để lưu làm mẫu!");
-                return;
-            }
-
-            // Tạo hộp thoại nhập tên
-            TextBox nameInput = new TextBox { PlaceholderText = "Nhập tên mẫu hình..." };
-            ContentDialog dialog = new ContentDialog
-            {
-                XamlRoot = this.XamlRoot,
-                Title = "Lưu Template",
-                Content = nameInput,
-                PrimaryButtonText = "Lưu",
-                CloseButtonText = "Hủy"
-            };
-
-            if (await dialog.ShowAsync() == ContentDialogResult.Primary)
-            {
-                string name = nameInput.Text.Trim();
-                if (!string.IsNullOrEmpty(name))
-                {
-                    // Truyền mảng tham số cho Command trong ViewModel
-                    await ViewModel.SaveTemplateWithNameCommand.ExecuteAsync(new object[] { name, _selectedShape });
-                    ShowNotification($"Đã lưu mẫu '{name}' thành công.");
-                }
-            }
-        }
-
-        // 2. Logic Xác nhận xóa Template
         private async void OnDeleteTemplateClick(object sender, RoutedEventArgs e)
         {
             if (sender is Button btn && btn.Tag is int id)
@@ -829,14 +832,6 @@ namespace PaintApp.Views.Pages
             }
 
             (sender as ListView).SelectedIndex = -1;
-        }
-
-        private void OnDeleteTemplateClick(object sender, RoutedEventArgs e)
-        {
-            if (sender is Button btn && btn.Tag is int id)
-            {
-                ViewModel.DeleteTemplateCommand.Execute(id);
-            }
         }
 
         private void ViewModel_OnCanvasLoaded(List<Shape> shapes, string backgroundColorHex)
