@@ -5,6 +5,7 @@ using PaintApp.Services;
 using PaintApp_Data.Entities;
 using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace PaintApp.ViewModels
@@ -42,20 +43,29 @@ namespace PaintApp.ViewModels
         }
 
         [RelayCommand]
-        public async Task AddProfile(string userName)
+        public async Task AddProfile(UserProfile profile)
         {
-            var newProfile = new UserProfile
-            {
-                UserName = userName,
-                DefaultCanvasWidth = 1000,
-                DefaultCanvasHeight = 800,
-                ThemePreference = "System",
-                CreatedAt = DateTime.Now,
-                LastAccessed = DateTime.Now
-            };
+            if (profile == null || string.IsNullOrWhiteSpace(profile.UserName)) return;
 
-            await _profileService.AddProfileAsync(newProfile);
-            await LoadData();
+            await _profileService.AddProfileAsync(profile);
+
+            if (profile.Id == 0)
+            {
+                await LoadData();
+            }
+            else
+            {
+                var existingProfile = Profiles.FirstOrDefault(p => p.Id == profile.Id);
+                if (existingProfile != null)
+                {
+                    existingProfile.UserName = profile.UserName;
+                    existingProfile.ThemePreference = profile.ThemePreference;
+                    existingProfile.DefaultCanvasWidth = profile.DefaultCanvasWidth;
+                    existingProfile.DefaultCanvasHeight = profile.DefaultCanvasHeight;
+                    existingProfile.LastAccessed = DateTime.Now;
+                    // ... Cập nhật các thuộc tính cấu hình khác
+                }
+            }
         }
 
         [RelayCommand]
