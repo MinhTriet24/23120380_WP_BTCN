@@ -49,21 +49,26 @@ namespace PaintApp.ViewModels
 
             await _profileService.AddProfileAsync(profile);
 
-            if (profile.Id == 0)
+            if (profile.Id == 0) 
             {
                 await LoadData();
             }
-            else
+            else 
             {
                 var existingProfile = Profiles.FirstOrDefault(p => p.Id == profile.Id);
                 if (existingProfile != null)
                 {
+                    // --- CẬP NHẬT TẤT CẢ CÁC THUỘC TÍNH ---
                     existingProfile.UserName = profile.UserName;
                     existingProfile.ThemePreference = profile.ThemePreference;
                     existingProfile.DefaultCanvasWidth = profile.DefaultCanvasWidth;
                     existingProfile.DefaultCanvasHeight = profile.DefaultCanvasHeight;
+                    existingProfile.DefaultCanvasColor = profile.DefaultCanvasColor;
+                    existingProfile.DefaultStrokeSize = profile.DefaultStrokeSize;
+                    existingProfile.DefaultStrokeColor = profile.DefaultStrokeColor;
+                    existingProfile.DefaultStrokeStyle = profile.DefaultStrokeStyle;
                     existingProfile.LastAccessed = DateTime.Now;
-                    // ... Cập nhật các thuộc tính cấu hình khác
+
                 }
             }
         }
