@@ -59,15 +59,12 @@ namespace PaintApp.Services
 
         public async Task<List<DrawingCanvas>> GetAllCanvasesAsync()
         {
-            return await _context.DrawingCanvases
-                .Select(c => new DrawingCanvas { Id = c.Id, Name = c.Name, CreatedAt = c.CreatedAt })
-                .OrderByDescending(c => c.CreatedAt)
-                .ToListAsync();
+            return await _context.DrawingCanvases.AsNoTracking().OrderByDescending(c => c.CreatedAt).ToListAsync();
         }
 
         public async Task<DrawingCanvas> GetCanvasByIdAsync(int id)
         {
-            return await _context.DrawingCanvases.FindAsync(id);
+            return await _context.DrawingCanvases.AsNoTracking().FirstOrDefaultAsync(c => c.Id == id);
         }
     }
 }

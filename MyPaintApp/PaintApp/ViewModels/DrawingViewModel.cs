@@ -38,7 +38,7 @@ namespace PaintApp.ViewModels
 
 
         [ObservableProperty]
-        private Color _fillColor = Colors.White;
+        private Color _fillColor = Colors.Transparent;
 
         [ObservableProperty] private double _canvasWidth = 800;
         [ObservableProperty] private double _canvasHeight = 600;
@@ -145,12 +145,11 @@ namespace PaintApp.ViewModels
 
                     await _canvasService.SaveCanvasAsync(existing);
 
-                    var itemInList = System.Linq.Enumerable.FirstOrDefault(SavedCanvases, c => c.Id == CurrentCanvasId);
-                    if (itemInList != null) itemInList.Name = name;
-
                     CanvasName = name;
                 }
             }
+
+            await LoadSavedCanvases();
         }
 
         [RelayCommand]
@@ -214,6 +213,9 @@ namespace PaintApp.ViewModels
         {
             CurrentCanvasId = -1;
             CanvasName = "Untitled";
+
+            CanvasWidth = 800;
+            CanvasHeight = 600;
         }
     }
 }

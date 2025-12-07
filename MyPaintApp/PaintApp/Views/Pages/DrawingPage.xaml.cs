@@ -753,11 +753,6 @@ namespace PaintApp.Views.Pages
             }
         }
 
-        private void OnDeleteButtonClicked(object sender, RoutedEventArgs e)
-        {
-            DeleteSelectedShape();
-        }
-
         private void OnTemplateClicked(object sender, SelectionChangedEventArgs e)
         {
             if (e.AddedItems.Count == 0) return;
@@ -950,6 +945,33 @@ namespace PaintApp.Views.Pages
 
                 ShowNotification("Đã lưu bài vẽ thành công!");
             }
+        }
+
+        private async void OnNewCanvasClicked(object sender, RoutedEventArgs e)
+        {
+            if (DrawingCanvas.Children.Count > 1)
+            {
+                ContentDialog confirmDialog = new ContentDialog
+                {
+                    XamlRoot = this.XamlRoot,
+                    Title = "Tạo bảng vẽ mới",
+                    Content = "Bạn có chắc chắn muốn tạo bảng vẽ mới?\n\nMọi hình vẽ chưa lưu trên màn hình hiện tại sẽ bị mất.",
+                    PrimaryButtonText = "Tạo mới",
+                    CloseButtonText = "Hủy bỏ",
+                    DefaultButton = ContentDialogButton.Primary
+                };
+
+                var result = await confirmDialog.ShowAsync();
+
+                if (result != ContentDialogResult.Primary) return;
+            }
+
+
+            ViewModel.CreateNewCanvas();
+
+            ResetCanvasUI();
+
+            ShowNotification("Đã tạo bảng vẽ mới.");
         }
 
     }

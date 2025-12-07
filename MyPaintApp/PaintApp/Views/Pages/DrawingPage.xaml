@@ -24,6 +24,9 @@
         </Grid.RowDefinitions>
 
         <CommandBar Grid.Row="0" DefaultLabelPosition="Right">
+
+            <AppBarButton Icon="Add" Label="Tạo mới" Click="OnNewCanvasClicked"/>
+            
             <AppBarButton Icon="OpenFile" Label="Mở bài vẽ">
                 <AppBarButton.Flyout>
                     <Flyout Opening="OnOpenFlyoutOpened">
