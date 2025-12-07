@@ -78,7 +78,6 @@ namespace PaintApp.Views.Pages
             canvasColorStack.Children.Add(new TextBlock { Text = "Màu Nền Canvas Mặc định", FontWeight = Microsoft.UI.Text.FontWeights.SemiBold });
             canvasColorStack.Children.Add(canvasColorPicker);
 
-
             var strokeColorPicker = new ColorPicker
             {
                 Color = GetColorFromHex(profile.DefaultStrokeColor),
@@ -110,7 +109,12 @@ namespace PaintApp.Views.Pages
             {
                 XamlRoot = this.XamlRoot,
                 Title = isEditing ? $"Chỉnh sửa Profile: {profile.UserName}" : "Tạo Profile Mới",
-                Content = dialogStack,
+                Content = new ScrollViewer
+                {
+                    Content = dialogStack,
+                    VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
+                    HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled
+                },
                 PrimaryButtonText = isEditing ? "Lưu" : "Tạo",
                 CloseButtonText = "Hủy",
                 DefaultButton = ContentDialogButton.Primary,
@@ -179,6 +183,8 @@ namespace PaintApp.Views.Pages
         {
             if (sender is Button btn && btn.Tag is PaintApp_Data.Entities.UserProfile profile)
             {
+                App.Current.CurrentProfile = profile;
+
                 var mainWindow = App.Current.Window as MainWindow;
 
                 if (mainWindow != null)

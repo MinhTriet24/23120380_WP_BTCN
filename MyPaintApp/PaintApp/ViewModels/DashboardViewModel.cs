@@ -68,8 +68,8 @@ namespace PaintApp.ViewModels
                     existingProfile.DefaultStrokeColor = profile.DefaultStrokeColor;
                     existingProfile.DefaultStrokeStyle = profile.DefaultStrokeStyle;
                     existingProfile.LastAccessed = DateTime.Now;
-
                 }
+                await LoadData();
             }
         }
 
@@ -79,6 +79,7 @@ namespace PaintApp.ViewModels
             if (profile == null) return;
             await _profileService.DeleteProfileAsync(profile.Id);
             Profiles.Remove(profile);
+            await LoadData();
         }
     }
 }

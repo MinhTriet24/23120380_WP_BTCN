@@ -38,18 +38,42 @@ namespace PaintApp
             {
                 var selectedItem = (NavigationViewItem)args.SelectedItem;
                 string pageTag = selectedItem.Tag.ToString();
+                Type targetPageType = null;
+                bool requiresProfile = false; // Flag kiểm tra trang cần profile
 
                 switch (pageTag)
                 {
                     case "Home":
-                        ContentFrame.Navigate(typeof(HomePage));
+                        targetPageType = typeof(HomePage);
                         break;
                     case "Draw":
-                        ContentFrame.Navigate(typeof(DrawingPage));
+                        targetPageType = typeof(DrawingPage);
+                        requiresProfile = true; // Trang Vẽ Cần Profile
                         break;
                     case "Dashboard":
-                        ContentFrame.Navigate(typeof(DashboardPage));
+                        targetPageType = typeof(DashboardPage);
                         break;
+                }
+
+                if (targetPageType != null)
+                {
+                    // KIỂM TRA ĐIỀU KIỆN HẠN CHẾ TRUY CẬP
+                    if (requiresProfile && App.Current.CurrentProfile == null)
+                    {
+                        // Nếu trang cần Profile VÀ Profile chưa được chọn
+                        ShowMessage("Vui lòng chọn hoặc tạo Profile trước khi truy cập trang Vẽ!");
+
+                        // Ngăn chặn chuyển trang và chuyển hướng về Dashboard/Home
+                        sender.SelectedItem = sender.MenuItems.OfType<NavigationViewItem>()
+                            .FirstOrDefault(item => item.Tag.ToString() == "Dashboard"); // Hoặc Home
+
+                        ContentFrame.Navigate(typeof(DashboardPage)); // Đảm bảo người dùng quay lại Dashboard
+                    }
+                    else
+                    {
+                        // Cho phép điều hướng
+                        ContentFrame.Navigate(targetPageType);
+                    }
                 }
             }
         }
@@ -69,6 +93,18 @@ namespace PaintApp
             }
 
             ContentFrame.Navigate(pageType, parameter);
+        }
+
+        private async void ShowMessage(string message)
+        {
+            var dialog = new ContentDialog
+            {
+                Title = "Cảnh báo",
+                Content = message,
+                CloseButtonText = "Đóng",
+                XamlRoot = this.Content.XamlRoot // Sử dụng XamlRoot của Window
+            };
+            await dialog.ShowAsync();
         }
 
     }

@@ -1054,7 +1054,9 @@ namespace PaintApp.Views.Pages
         {
             base.OnNavigatedTo(e);
 
-            if (e.Parameter is PaintApp_Data.Entities.UserProfile profile)
+            var profile = App.Current.CurrentProfile;
+
+            if (profile != null)
             {
                 _pendingProfile = profile;
                 ViewModel.CanvasWidth = profile.DefaultCanvasWidth;

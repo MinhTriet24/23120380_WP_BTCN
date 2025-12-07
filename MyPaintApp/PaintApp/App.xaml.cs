@@ -4,6 +4,7 @@ using PaintApp.Core.Interfaces;
 using PaintApp.Services;
 using PaintApp.ViewModels;
 using PaintApp_Data.Context;
+using PaintApp_Data.Entities;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -26,6 +27,7 @@ namespace PaintApp
         }
         private Window? _window;
 
+        public UserProfile? CurrentProfile { get; set; }
         public new static App Current => (App)Application.Current;
 
         public IServiceProvider Services { get; }
