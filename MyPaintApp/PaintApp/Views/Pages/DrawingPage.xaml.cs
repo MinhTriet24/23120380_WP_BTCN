@@ -455,6 +455,58 @@ namespace PaintApp.Views.Pages
             shape.ContextFlyout = menu;
         }
 
+        private async void OnSaveTemplateClicked(object sender, RoutedEventArgs e)
+        {
+            if (_selectedShape == null)
+            {
+                ShowNotification("Vui lòng chọn một hình để lưu làm mẫu!");
+                return;
+            }
+
+            // Tạo hộp thoại nhập tên
+            TextBox nameInput = new TextBox { PlaceholderText = "Nhập tên mẫu hình..." };
+            ContentDialog dialog = new ContentDialog
+            {
+                XamlRoot = this.XamlRoot,
+                Title = "Lưu Template",
+                Content = nameInput,
+                PrimaryButtonText = "Lưu",
+                CloseButtonText = "Hủy"
+            };
+
+            if (await dialog.ShowAsync() == ContentDialogResult.Primary)
+            {
+                string name = nameInput.Text.Trim();
+                if (!string.IsNullOrEmpty(name))
+                {
+                    // Truyền mảng tham số cho Command trong ViewModel
+                    await ViewModel.SaveTemplateWithNameCommand.ExecuteAsync(new object[] { name, _selectedShape });
+                    ShowNotification($"Đã lưu mẫu '{name}' thành công.");
+                }
+            }
+        }
+
+        // 2. Logic Xác nhận xóa Template
+        private async void OnDeleteTemplateClick(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button btn && btn.Tag is int id)
+            {
+                ContentDialog confirm = new ContentDialog
+                {
+                    XamlRoot = this.XamlRoot,
+                    Title = "Xác nhận xóa",
+                    Content = "Bạn có chắc muốn xóa vĩnh viễn mẫu hình này?",
+                    PrimaryButtonText = "Xóa",
+                    CloseButtonText = "Hủy"
+                };
+
+                if (await confirm.ShowAsync() == ContentDialogResult.Primary)
+                {
+                    await ViewModel.DeleteTemplateCommand.ExecuteAsync(id);
+                }
+            }
+        }
+
         private void Shape_PointerPressed(object sender, PointerRoutedEventArgs e)
         {
             if (ViewModel.CurrentTool != ToolType.Cursor) return;

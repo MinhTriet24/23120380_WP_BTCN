@@ -88,16 +88,24 @@ namespace PaintApp.ViewModels
         }
 
         [RelayCommand]
-        public async Task AddToTemplate(Shape shape)
+        public async Task AddToTemplate(object[] parameters)
         {
-            if (shape == null) return;
+            if (parameters == null || parameters.Length < 2) return;
+
+            string name = parameters[0] as string;
+            Shape shape = parameters[1] as Shape;
+
+            if (shape == null || string.IsNullOrEmpty(name)) return;
+
+            if (name.Length > 100) name = name.Substring(0, 100);
 
             string json = ShapeSerializer.SerializeSingle(shape);
 
             var newTemplate = new ShapeTemplate
             {
-                Name = $"{shape.GetType().Name} - {DateTime.Now:HH:mm:ss}",
+                Name = name, 
                 ShapeJson = json,
+                CreatedAt = DateTime.Now
             };
 
             await _canvasService.AddTemplateAsync(newTemplate);
