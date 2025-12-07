@@ -974,5 +974,18 @@ namespace PaintApp.Views.Pages
             ShowNotification("Đã tạo bảng vẽ mới.");
         }
 
+        private void OnNoFillColorClicked(object sender, RoutedEventArgs e)
+        {
+            ViewModel.FillColor = Colors.Transparent;
+
+            if (sender is FrameworkElement element && element.Parent is StackPanel panel && panel.Parent is FlyoutPresenter flyoutPresenter)
+            {
+                if (flyoutPresenter.Parent is Flyout flyout)
+                {
+                    flyout.Hide();
+                }
+            }
+        }
+
     }
 }

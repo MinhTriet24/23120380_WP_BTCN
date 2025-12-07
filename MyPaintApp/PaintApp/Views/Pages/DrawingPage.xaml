@@ -99,6 +99,30 @@
 
             <AppBarSeparator/>
 
+            <AppBarButton Icon="SolidStar" Label="Màu nền">
+                <AppBarButton.Flyout>
+                    <Flyout>
+                        <StackPanel Spacing="10">
+                            <TextBlock Text="Màu Nền (Fill Color)" FontWeight="SemiBold"/>
+
+                            <Button Content="Không có màu nền" 
+                                    Click="OnNoFillColorClicked" 
+                                    Background="{x:Bind ViewModel.FillBrush, Mode=OneWay}" 
+                                    HorizontalAlignment="Stretch"/>
+
+                            <ColorPicker Color="{x:Bind ViewModel.FillColor, Mode=TwoWay}"
+                                         IsMoreButtonVisible="False"
+                                         IsColorSliderVisible="True"
+                                         IsColorSpectrumVisible="True"
+                                         IsHexInputVisible="True"
+                                         IsAlphaEnabled="True"
+                                         ColorChanged="OnFillColorChanged"
+                                         IsColorPreviewVisible="True"/>
+                        </StackPanel>
+                    </Flyout>
+                </AppBarButton.Flyout>
+            </AppBarButton>
+
             <AppBarButton Icon="TouchPointer" Label="Cursor" Click="OnToolClicked" Tag="Cursor"/>
             <AppBarSeparator/>
             <AppBarButton Icon="Delete" Label="Xóa bảng vẽ" Click="OnDeleteCurrentBoardClicked"/>
@@ -130,22 +154,6 @@
                         </Button.Flyout>
                         <Button.BorderBrush>
                             <SolidColorBrush Color="{x:Bind ViewModel.StrokeColor, Mode=OneWay}"/>
-                        </Button.BorderBrush>
-                        <Button.BorderThickness>0,0,0,3</Button.BorderThickness>
-                    </Button>
-
-                    <Button Content="Màu nền">
-                        <Button.Flyout>
-                            <Flyout>
-                                <ColorPicker Color="{x:Bind ViewModel.FillColor, Mode=TwoWay}" 
-                                             ColorChanged="OnFillColorChanged"
-                                             IsColorSpectrumVisible="False"
-                                             IsColorChannelTextInputVisible="True"/>     
-                            </Flyout>
-                        </Button.Flyout>
-
-                        <Button.BorderBrush>
-                            <SolidColorBrush Color="{x:Bind ViewModel.FillColor, Mode=OneWay}"/>
                         </Button.BorderBrush>
                         <Button.BorderThickness>0,0,0,3</Button.BorderThickness>
                     </Button>

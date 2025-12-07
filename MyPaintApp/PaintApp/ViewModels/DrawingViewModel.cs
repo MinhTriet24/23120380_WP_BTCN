@@ -40,6 +40,8 @@ namespace PaintApp.ViewModels
         [ObservableProperty]
         private Color _fillColor = Colors.Transparent;
 
+        public SolidColorBrush FillBrush => new SolidColorBrush(FillColor);
+
         [ObservableProperty] private double _canvasWidth = 800;
         [ObservableProperty] private double _canvasHeight = 600;
         [ObservableProperty] private SolidColorBrush _canvasBackground = new SolidColorBrush(Colors.White);
