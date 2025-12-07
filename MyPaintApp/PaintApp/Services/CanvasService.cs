@@ -19,9 +19,25 @@ namespace PaintApp.Services
         public async Task SaveCanvasAsync(DrawingCanvas canvas)
         {
             if (canvas.Id == 0)
+            {
                 _context.DrawingCanvases.Add(canvas);
+            }
             else
+            {
+
+                var trackedEntity = _context.ChangeTracker.Entries<DrawingCanvas>()
+                    .FirstOrDefault(e => e.Entity.Id == canvas.Id);
+
+                if (trackedEntity != null)
+                {
+                    if (trackedEntity.Entity != canvas)
+                    {
+                        trackedEntity.State = EntityState.Detached;
+                    }
+                }
+
                 _context.DrawingCanvases.Update(canvas);
+            }
 
             await _context.SaveChangesAsync();
         }
