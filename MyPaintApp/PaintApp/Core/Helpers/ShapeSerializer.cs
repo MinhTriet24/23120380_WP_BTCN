@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using Windows.UI;
 
 namespace PaintApp.Core.Helpers
@@ -24,7 +25,13 @@ namespace PaintApp.Core.Helpers
                     dataList.Add(ConvertToData(shape));
                 }
             }
-            return JsonSerializer.Serialize(dataList);
+
+            var options = new JsonSerializerOptions
+            {
+                NumberHandling = JsonNumberHandling.AllowNamedFloatingPointLiterals
+            };
+
+            return JsonSerializer.Serialize(dataList, options);
         }
 
         public static List<Shape> Deserialize(string json)

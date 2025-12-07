@@ -1091,11 +1091,16 @@ namespace PaintApp.Views.Pages
                     else this.RequestedTheme = ElementTheme.Default; // System
                 }
 
+                ViewModel.CurrentProfileId = profile.Id;
+
                 ViewModel.CreateNewCanvas();
 
                 ResetCanvasUI();
 
                 DrawingCanvas.Background = ViewModel.CanvasBackground;
+
+                ViewModel.LoadTemplatesCommand.Execute(null);
+                ViewModel.LoadSavedCanvasesCommand.Execute(null);
 
             }
         }

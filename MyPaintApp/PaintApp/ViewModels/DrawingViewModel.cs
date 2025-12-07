@@ -52,6 +52,8 @@ namespace PaintApp.ViewModels
 
         public event Action<List<Shape>, string> OnCanvasLoaded;
 
+        public int CurrentProfileId { get; set; } = -1;
+
         [ObservableProperty]
         private int _currentCanvasId = -1;
 
@@ -105,6 +107,7 @@ namespace PaintApp.ViewModels
             {
                 Name = name, 
                 ShapeJson = json,
+                UserProfileId = CurrentProfileId
             };
 
             await _canvasService.AddTemplateAsync(newTemplate);
@@ -124,21 +127,20 @@ namespace PaintApp.ViewModels
                 // --- TRƯỜNG HỢP TẠO MỚI ---
                 var newCanvas = new DrawingCanvas
                 {
-                    Name = name, 
+                    Name = name,
                     Width = CanvasWidth,
                     Height = CanvasHeight,
                     BackgroundColor = CanvasBackground.Color.ToString(),
                     DataJson = json,
-                    UserProfileId = 1,
-                    CreatedAt = DateTime.Now
+                    CreatedAt = DateTime.Now,
+
+                    UserProfileId = CurrentProfileId
                 };
 
                 await _canvasService.SaveCanvasAsync(newCanvas);
 
                 CurrentCanvasId = newCanvas.Id;
                 CanvasName = name;
-
-                SavedCanvases.Insert(0, newCanvas);
             }
             else
             {
@@ -155,6 +157,15 @@ namespace PaintApp.ViewModels
                     await _canvasService.SaveCanvasAsync(existing);
 
                     CanvasName = name;
+
+                    var itemToUpdate = SavedCanvases.FirstOrDefault(c => c.Id == existing.Id);
+                    if (itemToUpdate != null)
+                    {
+                        // Để đảm bảo giao diện cập nhật (do DrawingCanvas không phải là ObservableObject)
+                        // Ta nên xóa và thêm lại để ListView nhận ra thay đổi.
+                        SavedCanvases.Remove(itemToUpdate);
+                        SavedCanvases.Insert(0, existing); // Chuyển lên đầu danh sách
+                    }
                 }
             }
 
@@ -164,9 +175,13 @@ namespace PaintApp.ViewModels
         [RelayCommand]
         public async Task LoadTemplates()
         {
-            var list = await _canvasService.GetAllTemplatesAsync();
+            var allTemplates = await _canvasService.GetAllTemplatesAsync();
+
             Templates.Clear();
-            foreach (var item in list) Templates.Add(item);
+            foreach (var template in allTemplates)
+            {
+                Templates.Add(template);
+            }
         }
 
         [RelayCommand]
@@ -179,9 +194,19 @@ namespace PaintApp.ViewModels
         [RelayCommand]
         public async Task LoadSavedCanvases()
         {
-            var list = await _canvasService.GetAllCanvasesAsync();
+            if (CurrentProfileId == -1) return;
+
+            var allCanvases = await _canvasService.GetAllCanvasesAsync();
+
+            var filteredCanvases = allCanvases
+                .Where(c => c.UserProfileId == CurrentProfileId)
+                .ToList();
+
             SavedCanvases.Clear();
-            foreach (var item in list) SavedCanvases.Add(item);
+            foreach (var canvas in filteredCanvases)
+            {
+                SavedCanvases.Add(canvas);
+            }
         }
 
         [RelayCommand]

@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PaintApp_Data.Entities
 {
@@ -14,6 +15,11 @@ namespace PaintApp_Data.Entities
 
         public string ShapeJson { get; set; }
 
-        public string IconPreview { get; set; } 
+        public string IconPreview { get; set; }
+
+        public int UserProfileId { get; set; }
+
+        [ForeignKey("UserProfileId")]
+        public virtual UserProfile UserProfile { get; set; }
     }
 }
