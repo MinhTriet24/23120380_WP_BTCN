@@ -66,8 +66,16 @@ namespace PaintApp.Views.Pages
         {
             if (sender is Button btn && btn.Tag is PaintApp_Data.Entities.UserProfile profile)
             {
-                // Điều hướng sang DrawingPage và TRUYỀN object Profile đi
-                Frame.Navigate(typeof(DrawingPage), profile);
+                var mainWindow = App.Current.Window as MainWindow;
+
+                if (mainWindow != null)
+                {
+                    mainWindow.NavigateAndUpdateNavView(typeof(DrawingPage), profile);
+                }
+                else
+                {
+                    Frame.Navigate(typeof(DrawingPage), profile);
+                }
             }
         }
     }

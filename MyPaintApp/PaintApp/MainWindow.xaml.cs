@@ -4,6 +4,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using PaintApp.Views.Pages;
 using System;
+using System.Linq;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -51,6 +52,23 @@ namespace PaintApp
                         break;
                 }
             }
+        }
+
+        public void NavigateAndUpdateNavView(Type pageType, object parameter = null)
+        {
+            var navItem = NavView.MenuItems
+                .OfType<NavigationViewItem>()
+                .FirstOrDefault(item =>
+                {
+                    return item.Tag.ToString() == "Draw" && pageType == typeof(PaintApp.Views.Pages.DrawingPage);
+                });
+
+            if (navItem != null)
+            {
+                NavView.SelectedItem = navItem;
+            }
+
+            ContentFrame.Navigate(pageType, parameter);
         }
 
     }

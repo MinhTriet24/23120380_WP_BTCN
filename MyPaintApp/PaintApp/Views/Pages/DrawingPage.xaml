@@ -9,6 +9,7 @@
     xmlns:enums="using:PaintApp.Core.Enums"
     xmlns:helpers="using:PaintApp.Core.Helpers"
     xmlns:data="using:PaintApp_Data.Entities"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
     mc:Ignorable="d">
 
     <Page.Resources>

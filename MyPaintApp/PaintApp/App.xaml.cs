@@ -20,6 +20,10 @@ namespace PaintApp
     /// </summary>
     public partial class App : Application
     {
+        public Window? Window
+        {
+            get { return _window; }
+        }
         private Window? _window;
 
         public new static App Current => (App)Application.Current;

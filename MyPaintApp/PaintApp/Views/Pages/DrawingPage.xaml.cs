@@ -9,6 +9,7 @@ using Microsoft.UI.Xaml.Navigation;
 using Microsoft.UI.Xaml.Shapes;
 using PaintApp.Core.Enums;
 using PaintApp.ViewModels;
+using PaintApp_Data.Entities;
 using System;
 using System.Collections.Generic;
 using System.Net.WebSockets;
@@ -38,12 +39,14 @@ namespace PaintApp.Views.Pages
         private bool _isDraggingShape = false;
         private bool _isResizing = false;
         private string _currentResizeHandleTag = "";
+        private UserProfile _pendingProfile;
 
         public DrawingPage()
         {
             ViewModel = App.Current.Services.GetService<DrawingViewModel>();
             InitializeComponent();
             ViewModel.OnCanvasLoaded += ViewModel_OnCanvasLoaded;
+            this.Loaded += DrawingPage_Loaded;
         }
 
         private void OnToolClicked(object sender, RoutedEventArgs e)
@@ -899,9 +902,13 @@ namespace PaintApp.Views.Pages
 
         private async void ShowNotification(string message)
         {
+            var root = this.XamlRoot ?? App.Current.Window.Content.XamlRoot;
+
+            if (this.XamlRoot == null) return;
+
             ContentDialog dialog = new ContentDialog
             {
-                XamlRoot = this.XamlRoot,
+                XamlRoot = this.XamlRoot, 
                 Title = "Thông báo",
                 Content = message,
                 CloseButtonText = "Đóng"
@@ -1049,6 +1056,7 @@ namespace PaintApp.Views.Pages
 
             if (e.Parameter is PaintApp_Data.Entities.UserProfile profile)
             {
+                _pendingProfile = profile;
                 ViewModel.CanvasWidth = profile.DefaultCanvasWidth;
                 ViewModel.CanvasHeight = profile.DefaultCanvasHeight;
 
@@ -1087,7 +1095,6 @@ namespace PaintApp.Views.Pages
 
                 DrawingCanvas.Background = ViewModel.CanvasBackground;
 
-                ShowNotification($"Xin chào {profile.UserName}, đã tải cấu hình cá nhân thành công!");
             }
         }
 
@@ -1122,6 +1129,16 @@ namespace PaintApp.Views.Pages
             catch
             {
                 return Microsoft.UI.Colors.Black; 
+            }
+        }
+
+        private void DrawingPage_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (_pendingProfile != null)
+            {
+                ShowNotification($"Xin chào {_pendingProfile.UserName}, đã tải cấu hình cá nhân thành công!");
+                _pendingProfile = null;
+                this.Loaded -= DrawingPage_Loaded;
             }
         }
 
