@@ -175,10 +175,16 @@ namespace PaintApp.ViewModels
         [RelayCommand]
         public async Task LoadTemplates()
         {
+            if (CurrentProfileId == -1) return;
+
             var allTemplates = await _canvasService.GetAllTemplatesAsync();
 
+            var filteredTemplates = allTemplates
+                .Where(t => t.UserProfileId == CurrentProfileId)
+                .ToList();
+
             Templates.Clear();
-            foreach (var template in allTemplates)
+            foreach (var template in filteredTemplates)
             {
                 Templates.Add(template);
             }
@@ -188,7 +194,14 @@ namespace PaintApp.ViewModels
         public async Task DeleteTemplate(int id)
         {
             await _canvasService.DeleteTemplateAsync(id);
+
             await LoadTemplates();
+
+            var itemToRemove = Templates.FirstOrDefault(t => t.Id == id);
+            if (itemToRemove != null)
+            {
+                Templates.Remove(itemToRemove);
+            }
         }
 
         [RelayCommand]
