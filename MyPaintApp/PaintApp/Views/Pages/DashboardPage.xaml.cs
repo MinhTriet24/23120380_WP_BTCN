@@ -1,31 +1,75 @@
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
+using PaintApp.ViewModels;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
 
 namespace PaintApp.Views.Pages
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
     public sealed partial class DashboardPage : Page
     {
+        public DashboardViewModel ViewModel { get; }
+
         public DashboardPage()
         {
-            InitializeComponent();
+            ViewModel = App.Current.Services.GetService<DashboardViewModel>();
+            this.InitializeComponent();
+
+            // Load dữ liệu khi trang được mở
+            this.Loaded += (s, e) => ViewModel.LoadDataCommand.Execute(null);
+        }
+
+        // --- XỬ LÝ NÚT THÊM PROFILE ---
+        private async void OnAddProfileClicked(object sender, RoutedEventArgs e)
+        {
+            TextBox input = new TextBox { PlaceholderText = "Nhập tên người dùng..." };
+            ContentDialog dialog = new ContentDialog
+            {
+                XamlRoot = this.XamlRoot,
+                Title = "Tạo Profile Mới",
+                Content = input,
+                PrimaryButtonText = "Tạo",
+                CloseButtonText = "Hủy",
+                DefaultButton = ContentDialogButton.Primary
+            };
+
+            if (await dialog.ShowAsync() == ContentDialogResult.Primary)
+            {
+                if (!string.IsNullOrWhiteSpace(input.Text))
+                    await ViewModel.AddProfileCommand.ExecuteAsync(input.Text);
+            }
+        }
+
+        // --- XỬ LÝ NÚT XÓA PROFILE ---
+        private async void OnDeleteProfileClicked(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button btn && btn.Tag is PaintApp_Data.Entities.UserProfile profile)
+            {
+                ContentDialog confirm = new ContentDialog
+                {
+                    XamlRoot = this.XamlRoot,
+                    Title = "Xác nhận xóa",
+                    Content = $"Bạn có chắc muốn xóa profile '{profile.UserName}'?.",
+                    PrimaryButtonText = "Xóa",
+                    CloseButtonText = "Hủy"
+                };
+
+                if (await confirm.ShowAsync() == ContentDialogResult.Primary)
+                {
+                    await ViewModel.DeleteProfileCommand.ExecuteAsync(profile);
+                }
+            }
+        }
+
+        // --- QUAN TRỌNG: CHUYỂN HƯỚNG SANG TRANG VẼ ---
+        private void OnSelectProfileClicked(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button btn && btn.Tag is PaintApp_Data.Entities.UserProfile profile)
+            {
+                // Điều hướng sang DrawingPage và TRUYỀN object Profile đi
+                Frame.Navigate(typeof(DrawingPage), profile);
+            }
         }
     }
 }
