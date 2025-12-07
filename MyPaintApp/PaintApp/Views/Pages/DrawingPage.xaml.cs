@@ -442,6 +442,10 @@ namespace PaintApp.Views.Pages
             menu.Items.Add(itemSaveTemplate);
             itemSaveTemplate.Click += async (s, e) =>
             {
+                if (_selectedShape == shape)
+                {
+                    DeselectCurrentShape();
+                }
                 TextBox nameInput = new TextBox
                 {
                     PlaceholderText = "Nhập tên mẫu hình...",
@@ -963,6 +967,7 @@ namespace PaintApp.Views.Pages
 
         private async void OnSaveButtonClicked(object sender, RoutedEventArgs e)
         {
+            DeselectCurrentShape();
             TextBox nameInput = new TextBox
             {
                 PlaceholderText = "Nhập tên bài vẽ...",
