@@ -21,7 +21,7 @@ namespace PaintApp.Services
             return await _context.UserProfiles.AsNoTracking().ToListAsync();
         }
 
-        public async Task AddProfileAsync(UserProfile profile)
+        public async Task AddProfileAsync(UserProfile profile) 
         {
             if (profile.Id == 0)
             {
@@ -31,6 +31,12 @@ namespace PaintApp.Services
             {
                 _context.UserProfiles.Update(profile);
             }
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task UpdateProfileAsync(UserProfile profile)
+        {
+            _context.UserProfiles.Update(profile);
             await _context.SaveChangesAsync();
         }
 

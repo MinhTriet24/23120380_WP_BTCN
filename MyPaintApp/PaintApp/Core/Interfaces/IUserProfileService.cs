@@ -13,7 +13,7 @@ namespace PaintApp.Core.Interfaces
         Task<List<UserProfile>> GetAllProfilesAsync();
         Task AddProfileAsync(UserProfile profile);
 
-        //Task Update
+        Task UpdateProfileAsync(UserProfile profile);
 
         Task DeleteProfileAsync(int id);
 
